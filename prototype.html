@@ -717,11 +717,23 @@
     if (mode === 'self') {
       addUserMsg('Самостоятельно');
       setTimeout(() => {
-        addBotMsg(`Отлично! Вот что понадобится для визы <b>${countryAcc(state.country.name)}</b>:<br>${getDocsList()}`);
+        addBotMsg(
+          `Тогда вот <b>опросный лист на шенген-визу</b> ${countryAdj(state.country.name)}.<br>` +
+          `<b style="color:#dc2626">Этот документ обязательно надо заполнить</b> и прислать обратно в чат.` +
+          `<br><br>` +
+          `<a href="docs/oprosnik-shengen.docx" download target="_blank" ` +
+          `style="display:inline-flex; align-items:center; gap:8px; background:var(--indigo-light); ` +
+          `color:var(--indigo); padding:8px 12px; border-radius:10px; text-decoration:none; ` +
+          `font-weight:600; font-size:12px; margin-top:4px;">` +
+          `📄 Опросник на Шенген.docx <span style="opacity:0.7;">· скачать</span></a>`
+        );
       }, 500);
       setTimeout(() => {
-        addBotMsg(`Также пришлю <b>опросный лист консульства</b> ${countryAdj(state.country.name)} — заполни и пришли обратно прямо в чат.<br>Если будут вопросы — пиши, я рядом.`);
-      }, 1600);
+        addBotMsg(`И вот <b>список документов</b>, которые понадобятся:<br>${getDocsList()}`);
+      }, 1800);
+      setTimeout(() => {
+        addBotMsg(`Если будут вопросы — пиши прямо здесь, я рядом. 👋`);
+      }, 3000);
     } else {
       addUserMsg('В Визовом центре');
       setTimeout(() => showScreen(5), 600);
