@@ -219,6 +219,9 @@
   }
   .bank-price small { font-size: 11px; color: var(--muted); font-weight: 600; display: block; }
   .bank-price b { font-size: 24px; color: var(--indigo); font-weight: 800; }
+  .bank-price-dual { display: flex; gap: 16px; }
+  .bank-price-dual b { font-size: 18px; }
+  .bank-price-dual small { font-size: 10px; }
   .bank-more {
     background: #fff; border: 1.5px solid var(--indigo); color: var(--indigo);
     padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 600;
@@ -589,7 +592,7 @@
             <div class="bank-spec"><p>Пополнение</p><p>Сбербанк, ВТБ</p></div>
           </div>
           <div class="bank-card-foot">
-            <div class="bank-price"><small>от</small><b>35 000 ₽</b></div>
+            <div class="bank-price"><small>оформление</small><b>20 000 ₽</b></div>
             <button class="bank-more">Подробнее</button>
           </div>
         </div>
@@ -620,7 +623,10 @@
             <div class="bank-spec"><p>Lounge Key</p><p>от 2 до 6 раз в год</p></div>
           </div>
           <div class="bank-card-foot">
-            <div class="bank-price"><small>оформление</small><b>40 000 ₽</b></div>
+            <div class="bank-price bank-price-dual">
+              <div><small>без доверенности</small><b>30 000 ₽</b></div>
+              <div><small>с доверенностью</small><b>25 000 ₽</b></div>
+            </div>
             <button class="bank-more">Подробнее</button>
           </div>
         </div>
@@ -651,7 +657,7 @@
             <div class="bank-spec"><p>Обслуживание</p><p>от $50 до $150 в год</p></div>
           </div>
           <div class="bank-card-foot">
-            <div class="bank-price"><small>оформление</small><b>45 000 ₽</b></div>
+            <div class="bank-price"><small>оформление</small><b>15 000 ₽</b></div>
             <button class="bank-more">Подробнее</button>
           </div>
         </div>
