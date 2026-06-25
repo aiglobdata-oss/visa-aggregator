@@ -344,13 +344,17 @@
   }
   .detail-overlay.open { display: flex; }
   .detail-window {
-    width: 100%; max-width: 760px;
-    background: linear-gradient(180deg, #0a1530 0%, #050b1d 100%);
+    width: 100%; max-width: 560px;
+    background: #050b1d;
     border-radius: 22px; position: relative; overflow: hidden;
     box-shadow: 0 30px 100px rgba(0,0,0,0.6);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.25);
     animation: detailIn .3s ease;
     color: #e6e9f0;
+  }
+  .detail-img {
+    width: 100%; display: block;
+    background: #050b1d;
   }
   @keyframes detailIn {
     from { opacity: 0; transform: translateY(40px) scale(0.97); }
@@ -712,12 +716,12 @@
         </div>
       </article>
 
-      <!-- 2. Бакай Банк Кыргызия -->
+      <!-- 2. Бакай Банк Киргизия -->
       <article class="bank-card" data-tags="topup applepay googlepay swift-out swift-in rental">
         <div class="bank-card-head" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
           <div class="bank-card-flag flag-kg"></div>
           <div class="bank-card-title">
-            <p class="bank-card-bank">Бакай Банк · Кыргызия</p>
+            <p class="bank-card-bank">Бакай Банк · Киргизия</p>
             <p class="bank-card-name">Visa Gold / Platinum / Infinite</p>
           </div>
         </div>
@@ -746,12 +750,12 @@
         </div>
       </article>
 
-      <!-- 3. Айыл Банк Кыргызия -->
+      <!-- 3. Айыл Банк Киргизия -->
       <article class="bank-card" data-tags="topup applepay googlepay swift-out swift-in rental">
         <div class="bank-card-head" style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%);">
           <div class="bank-card-flag flag-kg"></div>
           <div class="bank-card-title">
-            <p class="bank-card-bank">Айыл Банк · Кыргызия</p>
+            <p class="bank-card-bank">Айыл Банк · Киргизия</p>
             <p class="bank-card-name">Visa Gold / Infinite</p>
           </div>
         </div>
@@ -868,17 +872,11 @@
   </div>
 </footer>
 
-<!-- BANK DETAIL MODAL -->
+<!-- BANK DETAIL MODAL — большая инфографика + кнопка оформить -->
 <div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail-window">
     <button class="detail-close" onclick="closeDetail()" aria-label="Закрыть">×</button>
-    <div class="detail-hero">
-      <div class="detail-flag-circle" id="detailFlag"></div>
-      <p class="detail-bank" id="detailBank">Bank</p>
-      <h2 class="detail-title" id="detailTitle">Title</h2>
-      <p class="detail-subtitle" id="detailSubtitle">subtitle</p>
-    </div>
-    <div class="detail-body" id="detailBody"></div>
+    <img class="detail-img" id="detailImg" src="" alt="Инфографика карты" />
     <div class="detail-foot">
       <div class="detail-price-row">
         <span class="lbl">Стоимость оформления</span>
@@ -927,166 +925,20 @@
     document.querySelectorAll('.filter-chip.active').forEach(c => c.classList.remove('active'));
     applyFilters();
   });
-  // BANK DETAIL DATA
+  // BANK DETAIL DATA — путь к инфографике + цена
   const BANK_DETAILS = {
-    kg: {
-      flagClass: 'flag-kg', bank: 'Кыргызстан · Visa', title: 'Карта Кыргызстана<br>Visa Gold / Platinum',
-      subtitle: 'Выпуск 1–7 дней · оплата зарубежных сервисов', price: '20 000 ₽',
-      features: [
-        'SWIFT USD / EUR / AED / CNY',
-        'Переводы Visa / Mastercard',
-        'Пополнение с российских карт',
-        'Кредитный BIN для аренды авто',
-        'Удобное мобильное приложение',
-        '−50% на оформление второй карты',
-        'Apple Pay и Google Pay',
-        'Срок действия — 5 лет',
-      ],
-      tariffs: [
-        { name: 'Безымянные Gold', rows: [['Статус', '<b>В наличии</b>'], ['Активация', '<b>1–2 дня</b>'], ['Тип', '<b>Пластик</b>']] },
-        { name: 'Именная в приложении', rows: [['Срок выпуска', '<b>1 день</b>'], ['Тип', '<b>Виртуальная</b>'], ['Видео-KYC', '<b>Нет</b>']] },
-        { name: 'Именная Platinum', rows: [['Срок выпуска', '<b>3–5 дней</b>'], ['Тип', '<b>Пластик</b>'], ['Лимиты', '<b>Расширенные</b>']] },
-      ],
-      uses: [
-        { ico: '🛒', lbl: 'Онлайн<br>покупки' },
-        { ico: '✈️', lbl: 'Авиабилеты<br>и отели' },
-        { ico: '🚗', lbl: 'Аренда<br>автомобилей' },
-        { ico: '🌍', lbl: 'Зарубежные<br>сервисы' },
-      ],
-      docs: ['Скан загранпаспорта', 'Скан паспорта РФ (основная + прописка)', 'Заполненная анкета'],
-    },
-    bakai: {
-      flagClass: 'flag-kg', bank: 'Бакай Банк · Кыргызия', title: 'Бакай Банк<br>Gold / Platinum / Infinite',
-      subtitle: 'Самая низкая комиссия за обслуживание среди карт КР', price: 'от 25 000 ₽',
-      features: [
-        'Именная Visa — 5 лет действия',
-        'SWIFT входящий и исходящий',
-        'Пополнение из банков РФ',
-        'Снятие в банкоматах — 1%',
-        'Оплата покупок без комиссии',
-        'Привязка к номеру РФ',
-        'Email-информирование',
-        'Официальное оформление',
-        'Вывод денег на российские карты',
-        'Выгодный курс банка',
-        'Отправка карты по всему миру',
-        'Кредитный BIN для аренды авто',
-      ],
-      tariffs: [
-        { name: 'Visa Gold', rows: [['Лимит/день', '<b>$6 000</b>'], ['Обслуживание', '<b>$20/год</b>'], ['Lounge Key', '<b>2 раза/год</b>']] },
-        { name: 'Visa Platinum', rows: [['Лимит/день', '<b>$12 000</b>'], ['Обслуживание', '<b>$100/год</b>'], ['Lounge Key', '<b>2 раза/год</b>']] },
-        { name: 'Visa Infinite', rows: [['Лимит/день', '<b>$20 000 (до $50k)</b>'], ['Обслуживание', '<b>$150/год</b>'], ['Lounge Key', '<b>6 раз/год</b>']] },
-      ],
-      uses: [
-        { ico: '💼', lbl: 'Бизнес-залы<br>аэропортов' },
-        { ico: '🚗', lbl: 'Аренда<br>авто' },
-        { ico: '🌐', lbl: 'Международные<br>переводы' },
-        { ico: '💱', lbl: '6 валют<br>счёта' },
-      ],
-      docs: ['Скан разворота загранпаспорта', 'Скан паспорта РФ (основная + прописка)', 'Нотариальная доверенность по форме банка', 'Заполненная анкета', 'Пересылка доверенности СДЭК или курьером — за наш счёт'],
-    },
-    ayil: {
-      flagClass: 'flag-kg', bank: 'Айыл Банк · Кыргызия', title: 'Айыл Банк<br>Visa Gold / Infinite',
-      subtitle: 'Самый большой функционал · государственный банк', price: '15 000 ₽',
-      features: [
-        'Счёт в 14 валютах',
-        'VISA EUR или USD (или вместе)',
-        'Лучший курс конвертации',
-        'Государственный банк',
-        'Без обмена данных с ФНС РФ',
-        'SMS-информирование',
-        'Пополнение без комиссии',
-        'Пополняется со всех банков РФ',
-        'Вывод на карты РФ',
-        'Снятие наличных 3%',
-        'Самая низкая комиссия на вывод — 0,3%',
-        'Возможность открытия с 14 лет',
-      ],
-      tariffs: [
-        { name: 'Visa Gold', rows: [['Открытие', '<b>$145</b>'], ['Обслуживание', '<b>$50/год</b>'], ['Неснижаемый остаток', '<b>$5</b>']] },
-        { name: 'Visa Infinite', rows: [['Открытие', '<b>$445</b>'], ['Обслуживание', '<b>$150/год</b>'], ['DragonPass', '<b>Включён</b>']] },
-        { name: 'SWIFT', rows: [['RUB → ЕС', '<b>0,35%</b>'], ['CNY → Китай', '<b>0,2%</b>'], ['AED → ОАЭ', '<b>0,5%</b>']] },
-      ],
-      uses: [
-        { ico: '💱', lbl: '14 валют<br>счёта' },
-        { ico: '🐉', lbl: 'DragonPass<br>аэропорты' },
-        { ico: '🏛️', lbl: 'Государ-<br>ственный' },
-        { ico: '👶', lbl: 'С 14 лет<br>можно' },
-      ],
-      docs: ['Скан разворота загранпаспорта', 'Скан паспорта РФ (основная и прописка)', 'Нотариальная доверенность по форме банка', 'Заполненная анкета', 'Пересылка доверенности и анкеты — за наш счёт'],
-    },
-    am: {
-      flagClass: 'flag-am', bank: 'Армения · MasterCard', title: 'Карта Армении<br>с Apple Pay',
-      subtitle: 'Без визита в Армению · видео-верификация ~5 минут', price: '30 000 ₽',
-      features: [
-        'MasterCard Standard / Gold / World Elite',
-        'Полностью дистанционно',
-        'Видео-верификация ~5 минут',
-        'Срок действия 4 года',
-        'Валюта счёта USD или EUR',
-        'Apple Pay / Google Pay',
-        'Бесконтактная PayWave',
-        '3D Secure + SMS 3D Secure',
-        'PUSH-уведомления — бесплатно',
-        'Консьерж-сервис (World / Elite)',
-        'P2P между картами MasterCard',
-        'Пополнение из любого банка РФ',
-      ],
-      tariffs: [
-        { name: 'Standard', rows: [['Обслуживание', '<b>~4 000 ₽/год</b>'], ['Снятие', '<b>2%, мин 3 000 AMD</b>'], ['Лимит/день', '<b>$20 000</b>']] },
-        { name: 'Gold', rows: [['Обслуживание', '<b>~8 000 ₽/год</b>'], ['Снятие', '<b>0%</b>'], ['Лимит/день', '<b>$20 000</b>']] },
-        { name: 'World Elite', rows: [['Обслуживание', '<b>~26 000 ₽/год</b>'], ['Снятие', '<b>0%</b>'], ['Лимит/день', '<b>Без ограничений</b>']] },
-      ],
-      uses: [
-        { ico: '📱', lbl: 'Подписки<br>App Store' },
-        { ico: '🍎', lbl: 'Apple Pay<br>и Google Pay' },
-        { ico: '✈️', lbl: 'Поездки<br>и онлайн' },
-        { ico: '💸', lbl: 'Вывод<br>в РФ' },
-      ],
-      docs: ['Паспорт РФ (фото + прописка)', 'Загранпаспорт', 'Подписанные формы KYC', 'Видео-верификация: звонок с сотрудником банка ~5 минут'],
-    },
+    kg:    { img: 'images/kg.png.jpg',    price: '20 000 ₽' },
+    bakai: { img: 'images/bakai.png.jpg', price: 'от 25 000 ₽' },
+    ayil:  { img: 'images/ayil.png.jpg',  price: '15 000 ₽' },
+    am:    { img: 'images/am.png.jpg',    price: '30 000 ₽' },
   };
 
-  // Open detail modal
+  // Open detail modal — показывает большую инфографику
   function openDetail(key) {
     const d = BANK_DETAILS[key];
     if (!d) return;
-    document.getElementById('detailFlag').className = 'detail-flag-circle ' + d.flagClass;
-    document.getElementById('detailBank').textContent = d.bank;
-    document.getElementById('detailTitle').innerHTML = d.title;
-    document.getElementById('detailSubtitle').textContent = d.subtitle;
+    document.getElementById('detailImg').src = d.img;
     document.getElementById('detailPrice').textContent = d.price;
-
-    const body = document.getElementById('detailBody');
-    body.innerHTML = `
-      <div class="d-section">
-        <h3>Особенности</h3>
-        <div class="d-feats">${d.features.map(f => `<div class="d-feat">${f}</div>`).join('')}</div>
-      </div>
-      <div class="d-section">
-        <h3>Тарифы</h3>
-        <div class="d-tariff-grid">
-          ${d.tariffs.map(t => `
-            <div class="d-tariff">
-              <div class="name">${t.name}</div>
-              ${t.rows.map(r => `<div class="row"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('')}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      <div class="d-section">
-        <h3>Подходит для</h3>
-        <div class="d-uses">
-          ${d.uses.map(u => `<div class="d-use"><div class="ico">${u.ico}</div><div class="lbl">${u.lbl}</div></div>`).join('')}
-        </div>
-      </div>
-      <div class="d-section">
-        <h3>Документы для оформления</h3>
-        <div class="d-docs-list">
-          ${d.docs.map(doc => `<div class="d-doc">${doc}</div>`).join('')}
-        </div>
-      </div>
-    `;
     document.getElementById('detailOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
