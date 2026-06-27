@@ -852,7 +852,14 @@
     input.setAttribute('autocapitalize', q.autocap || 'none');
     if (q.maxlength) input.setAttribute('maxlength', q.maxlength); else input.removeAttribute('maxlength');
     input.type = 'text';
-    setTimeout(() => input.focus(), 50);
+    setTimeout(() => {
+      input.focus();
+      // Для телефона ставим курсор в конец после +7
+      if (q.type === 'phone') {
+        const len = input.value.length;
+        input.selectionStart = input.selectionEnd = len;
+      }
+    }, 50);
 
     const dots = document.getElementById('progress-dots');
     dots.innerHTML = '';
@@ -899,6 +906,15 @@
       const sel = inp.selectionStart;
       if ((e.key === 'Backspace' || e.key === 'Delete') && val.startsWith('+7') && sel <= 3) {
         e.preventDefault();
+        return;
+      }
+      // Если курсор попал перед +7 и вводят цифру — перемещаем в конец
+      if (/^\d$/.test(e.key) && val.startsWith('+7') && sel < 3) {
+        e.preventDefault();
+        inp.selectionStart = inp.selectionEnd = val.length;
+        inp.value = val + e.key;
+        inp.dispatchEvent(new Event('input'));
+        return;
       }
     }
   });
@@ -916,18 +932,18 @@
       state.currentQ++;
       renderQuestion();
     } else {
-      // 8 Q пройдены → переход на экран 3 (2 кнопки)
+      // 8 Q пройдены → переход на экран 3
       state.qDone = true;
-      // Текст primary-кнопки зависит от mode
       const primary = document.getElementById('primary-action');
-      if (state.mode === 'slot') {
-        // страну уже выбрали → "Найти мне слот" (запустит поиск)
-        primary.textContent = 'Найти мне слот →';
-      } else {
-        // visa-mode: страну ещё не выбрали → "Найти мне слот" (откроет 4 страны)
-        primary.textContent = 'Найти мне слот →';
-      }
+      primary.textContent = 'Найти мне слот →';
       showScreen(3);
+      // visa-mode: через 2.5 сек авто-открываем чат (без поиска слота)
+      if (state.mode === 'visa') {
+        setTimeout(() => {
+          showScreen(7);
+          initVisaChat();
+        }, 2500);
+      }
     }
   });
   document.getElementById('q-back').addEventListener('click', () => {
@@ -1073,7 +1089,7 @@
     } else {
       const b1 = document.createElement('button');
       b1.className = 'side-btn side-btn-indigo';
-      b1.textContent = 'Найти слот';
+      b1.textContent = 'Найди мне слот';
       b1.id = 'side-slot';
       container.appendChild(b1);
       const b2 = document.createElement('button');
@@ -1198,7 +1214,7 @@
     body.innerHTML = '';
     renderSideBtns();
 
-    addBotMsg(`Поздравляю, ${getFirstName()}! 🎉<br>Слот закреплён за тобой: <b>14 июля, 10:30</b><br>г. Москва, ул. Садовая-Кудринская, 3<br>${countryAcc(state.country.name)}`);
+    addBotMsg(`Поздравляю, ${getFirstName()}! 🎉<br>Слот закреплён за тобой: <b>14 июля, 10:30</b><br>г. Москва, ул. Садовая-Кудринская, 3<br>${countryAcc(state.country.name)}<br><br>⏰ <b>Прибыть за 20 мин до встречи!</b>`);
 
     if (state.slotOnly) {
       // пришли из "Найти слот" в чате — только поздравление, без документов
@@ -1246,6 +1262,47 @@
 
     // slot-mode: только приветствие, документы показываются по кнопке
     setTimeout(() => addBotMsg('Если будут вопросы — пиши здесь, я рядом. 👋'), 900);
+  }
+
+  // visa-mode: открывается сразу после 8 вопросов, без поиска слота
+  function initVisaChat() {
+    const body = document.getElementById('chat-body');
+    body.innerHTML = '';
+    renderSideBtns();
+    setTimeout(() => {
+      addBotMsg('Я Анна, твой консультант. Помогу с документами и подготовкой к подаче.');
+      setTimeout(() => {
+        const row = document.createElement('div');
+        row.className = 'choice-row';
+        row.innerHTML = `
+          <button class="choice-btn" id="vc-self">Самостоятельное оформление</button>
+          <button class="choice-btn" id="vc-center">С помощью визового центра</button>
+        `;
+        body.appendChild(row);
+        body.scrollTop = 99999;
+        document.getElementById('vc-self').addEventListener('click', () => {
+          row.remove();
+          addUserMsg('Самостоятельное оформление');
+          setTimeout(() => {
+            addBotMsg(
+              `Хорошо! Вот <b>опросный лист на шенген-визу</b>:<br><br>` +
+              `<a href="docs/oprosnik-shengen.docx" download target="_blank" ` +
+              `style="display:inline-flex;align-items:center;gap:8px;background:var(--indigo-light);` +
+              `color:var(--indigo);padding:8px 12px;border-radius:10px;text-decoration:none;` +
+              `font-weight:600;font-size:12px;margin-top:4px;">` +
+              `📄 Опросник на Шенген.docx <span style="opacity:0.7;">· скачать</span></a>`
+            );
+            setTimeout(() => addBotMsg(`Также список нужных документов:<br>${getDocsList()}`), 900);
+            setTimeout(() => addBotMsg('Если будут вопросы — пиши прямо здесь, я рядом. 👋'), 1900);
+          }, 400);
+        });
+        document.getElementById('vc-center').addEventListener('click', () => {
+          row.remove();
+          addUserMsg('С помощью визового центра');
+          setTimeout(() => addBotMsg('Понял! Скоро свяжется наш специалист. 🤝'), 400);
+        });
+      }, 700);
+    }, 500);
   }
 
   function getFirstName() {
