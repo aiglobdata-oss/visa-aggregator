@@ -738,16 +738,11 @@
   <div class="proto-auth-card">
     <button class="proto-close" id="proto-auth-close">✕</button>
     <div class="proto-auth-logo">VisaSlot</div>
-    <div class="proto-auth-desc">Зарегистрируйтесь, чтобы забронировать и оплатить слот</div>
+    <div class="proto-auth-desc">Один шаг — и слот ваш</div>
 
-    <div class="proto-auth-tabs">
-      <div class="proto-auth-tab active" data-ptab="login">Войти</div>
-      <div class="proto-auth-tab" data-ptab="reg">Регистрация</div>
-    </div>
-
-    <div id="proto-name-field" style="display:none;" class="proto-field">
+    <div class="proto-field">
       <label class="proto-label">Имя и фамилия</label>
-      <input class="proto-input" id="proto-name" placeholder="Иван Иванов">
+      <input class="proto-input" id="proto-name" placeholder="Иван Иванов" autocapitalize="words">
     </div>
     <div class="proto-field">
       <label class="proto-label">Номер телефона</label>
@@ -763,19 +758,21 @@
         <button class="proto-sms-send" id="proto-sms-send">Отправить</button>
       </div>
     </div>
-    <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:14px;cursor:pointer;" id="proto-agree-row">
-      <div class="proto-agree-box" id="proto-agree-box" style="width:18px;height:18px;border:2px solid #d1d5db;border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
-      <div style="font-size:13px;color:#6b7280;line-height:1.5;">Согласен с <span style="color:#4f46e5;">офертой</span> и <span style="color:#4f46e5;">политикой конфиденциальности</span></div>
+    <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;" id="proto-agree-row">
+      <div id="proto-agree-box" style="width:18px;height:18px;border:2px solid #4f46e5;border-radius:4px;flex-shrink:0;margin-top:1px;background:#4f46e5;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <span style="color:#fff;font-size:11px;font-weight:700;">✓</span>
+      </div>
+      <div style="font-size:13px;color:#6b7280;line-height:1.5;cursor:pointer;">Согласен с <span style="color:#4f46e5;">офертой</span> и <span style="color:#4f46e5;">политикой конфиденциальности</span></div>
     </div>
-    <button class="proto-btn" id="proto-submit">Получить код</button>
+    <button class="proto-btn" id="proto-submit">Зарегистрироваться</button>
     <div class="proto-or">или</div>
     <button class="proto-social" onclick="protoAuthSuccess()">
       <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M5.5 11.5l10-4c.8-.3 1.5.2 1.2 1.3l-1.7 7.8c-.1.6-.5.8-1 .5l-2.7-2-1.3 1.2c-.1.1-.3.2-.6.2l.2-2.9 5.2-4.7c.2-.2 0-.3-.3-.1L8.3 13.4l-2.8-.9c-.6-.2-.6-.6 0-.9z" fill="white"/></svg>
-      Войти через Telegram
+      Зарегистрироваться через Telegram
     </button>
     <button class="proto-social" onclick="protoAuthSuccess()">
       <svg viewBox="0 0 24 24" width="18" height="18"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      Войти через Google
+      Зарегистрироваться через Google
     </button>
   </div>
 </div>
@@ -1277,28 +1274,27 @@
     }, 2500);
   }
 
-  // Открыть регистрацию с предзаполненными данными из анкеты
+  // ── INLINE AUTH MODAL JS ──
+  let protoAuthed = false;
+  let protoStep = 'phone';
+  let protoTimerActive = false;
+
   function openAuthWithPrefill() {
-    // Предзаполнить имя (Q0) и телефон (Q7)
-    const name = state.answers[0] || '';
-    const phone = state.answers[questions.length - 1] || '';
-    const nameEl = document.getElementById('proto-name');
-    const phoneEl = document.getElementById('proto-phone');
-    if (nameEl && name) nameEl.value = name;
-    if (phoneEl && phone) {
-      // Убрать +7 если есть в начале
-      phoneEl.value = phone.replace(/^\+7\s?/, '').replace(/^8/, '');
+    // Предзаполнить имя (Q0) и телефон (последний вопрос)
+    const nameVal = state.answers[0] || '';
+    const phoneVal = state.answers[questions.length - 1] || '';
+    if (nameVal) document.getElementById('proto-name').value = nameVal;
+    if (phoneVal) {
+      const digits = phoneVal.replace(/\D/g, '').replace(/^(7|8)/, '').slice(0, 10);
+      let out = '';
+      if (digits.length > 0) out += '(' + digits.slice(0, 3);
+      if (digits.length >= 3) out += ') ' + digits.slice(3, 6);
+      if (digits.length >= 6) out += '-' + digits.slice(6, 8);
+      if (digits.length >= 8) out += '-' + digits.slice(8, 10);
+      document.getElementById('proto-phone').value = out;
     }
-    // Поставить галочку согласия автоматически
-    document.getElementById('proto-agree-box').classList.add('checked');
-    protoAgreed = true;
-    // Переключить на вкладку "Регистрация"
-    document.querySelectorAll('.proto-auth-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('.proto-auth-tab[data-ptab="reg"]').classList.add('active');
-    protoTab = 'reg';
-    document.getElementById('proto-name-field').style.display = '';
-    document.getElementById('proto-submit').textContent = 'Зарегистрироваться';
     document.getElementById('proto-sms-step').style.display = 'none';
+    document.getElementById('proto-submit').textContent = 'Зарегистрироваться';
     protoStep = 'phone';
     document.getElementById('proto-auth-overlay').classList.add('open');
   }
@@ -1311,13 +1307,6 @@
     }
   });
 
-  // ── INLINE AUTH MODAL JS ──
-  let protoAuthed = false;
-  let protoAgreed = false;
-  let protoStep = 'phone';
-  let protoTab = 'login';
-  let protoTimerActive = false;
-
   function protoAuthSuccess() {
     protoAuthed = true;
     document.getElementById('proto-auth-overlay').classList.remove('open');
@@ -1326,18 +1315,6 @@
 
   document.getElementById('proto-auth-close').addEventListener('click', () => {
     document.getElementById('proto-auth-overlay').classList.remove('open');
-  });
-
-  document.querySelectorAll('.proto-auth-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.proto-auth-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      protoTab = tab.dataset.ptab;
-      document.getElementById('proto-name-field').style.display = protoTab === 'reg' ? '' : 'none';
-      document.getElementById('proto-submit').textContent = protoTab === 'reg' ? 'Зарегистрироваться' : 'Получить код';
-      document.getElementById('proto-sms-step').style.display = 'none';
-      protoStep = 'phone';
-    });
   });
 
   document.getElementById('proto-phone').addEventListener('input', e => {
@@ -1368,7 +1345,7 @@
       const phone = document.getElementById('proto-phone').value.replace(/\D/g, '');
       if (phone.length < 10) { alert('Введите номер телефона полностью'); return; }
       document.getElementById('proto-sms-step').style.display = '';
-      document.getElementById('proto-submit').textContent = 'Войти';
+      document.getElementById('proto-submit').textContent = 'Подтвердить';
       protoStep = 'sms';
       startProtoTimer();
     } else {
@@ -1381,15 +1358,6 @@
   document.getElementById('proto-sms').addEventListener('input', e => {
     e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
     if (e.target.value.length === 6) protoAuthSuccess();
-  });
-
-  // Галочка согласия
-  document.getElementById('proto-agree-row').addEventListener('click', () => {
-    protoAgreed = !protoAgreed;
-    const box = document.getElementById('proto-agree-box');
-    box.style.background = protoAgreed ? '#4f46e5' : '';
-    box.style.borderColor = protoAgreed ? '#4f46e5' : '#d1d5db';
-    box.innerHTML = protoAgreed ? '<span style="color:#fff;font-size:11px;font-weight:700;">✓</span>' : '';
   });
 
   // ── PAYMENT OVERLAY ──

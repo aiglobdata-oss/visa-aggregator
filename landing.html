@@ -1050,7 +1050,7 @@
     document.body.style.overflow = '';
   }
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeDemo();
+    if (false && e.key === 'Escape') closeDemo(); // демо закрывается только крестиком
     if ((e.key === 'p' || e.key === 'P' || e.key === 'з' || e.key === 'З') &&
         !document.getElementById('demoOverlay').classList.contains('open') &&
         !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
