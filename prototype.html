@@ -1214,20 +1214,11 @@
   }
 
   document.getElementById('pay-btn').addEventListener('click', () => {
-    if (window.self !== window.top) {
-      // В iframe на лендинге — просим родителя открыть модалку
-      if (parentAuthed) {
-        proceedToPay();
-      } else {
-        window.parent.postMessage({ type: 'require_auth' }, '*');
-      }
+    if (protoAuthed || parentAuthed) {
+      proceedToPay();
     } else {
-      // Открыт напрямую — показываем встроенную модалку
-      if (protoAuthed) {
-        proceedToPay();
-      } else {
-        document.getElementById('proto-auth-overlay').classList.add('open');
-      }
+      // Всегда показываем встроенную модалку — работает и в iframe, и напрямую
+      document.getElementById('proto-auth-overlay').classList.add('open');
     }
   });
 
