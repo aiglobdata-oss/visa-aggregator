@@ -1237,10 +1237,6 @@
   document.getElementById('proto-auth-close').addEventListener('click', () => {
     document.getElementById('proto-auth-overlay').classList.remove('open');
   });
-  document.getElementById('proto-auth-overlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('proto-auth-overlay'))
-      document.getElementById('proto-auth-overlay').classList.remove('open');
-  });
 
   document.querySelectorAll('.proto-auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
