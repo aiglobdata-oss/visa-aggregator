@@ -1220,16 +1220,20 @@
   // SCREEN 7 — чат с консультантом после оплаты
   function initSlotChat() {
     const body = document.getElementById('chat-body');
+
+    if (state.slotOnly) {
+      // Пришли из кнопки "Найди мне слот" прямо из чата:
+      // не очищаем переписку — просто добавляем поздравление снизу
+      addBotMsg(`Слот закреплён! 🎉 <b>14 июля, 10:30</b><br>г. Москва, ул. Садовая-Кудринская, 3<br>${countryAcc(state.country.name)}<br><br>⏰ <b>Прибыть за 20 мин до встречи!</b>`);
+      setTimeout(() => addBotMsg('Все готово. Если есть вопросы — пиши, я рядом. 👋'), 900);
+      return;
+    }
+
+    // Первый вход в чат из slot-mode (не из кнопки "Найди мне слот" в чате)
     body.innerHTML = '';
     renderSideBtns();
 
     addBotMsg(`Поздравляю, ${getFirstName()}! 🎉<br>Слот закреплён за тобой: <b>14 июля, 10:30</b><br>г. Москва, ул. Садовая-Кудринская, 3<br>${countryAcc(state.country.name)}<br><br>⏰ <b>Прибыть за 20 мин до встречи!</b>`);
-
-    if (state.slotOnly) {
-      // пришли из "Найти слот" в чате — только поздравление, без документов
-      setTimeout(() => addBotMsg('Если будут вопросы — пиши здесь, я рядом. 👋'), 900);
-      return;
-    }
 
     if (state.mode === 'visa') {
       // visa-mode: показать 2 choice-btn вместо документов
