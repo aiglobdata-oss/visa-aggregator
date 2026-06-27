@@ -763,6 +763,10 @@
         <button class="proto-sms-send" id="proto-sms-send">Отправить</button>
       </div>
     </div>
+    <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:14px;cursor:pointer;" id="proto-agree-row">
+      <div class="proto-agree-box" id="proto-agree-box" style="width:18px;height:18px;border:2px solid #d1d5db;border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+      <div style="font-size:13px;color:#6b7280;line-height:1.5;">Согласен с <span style="color:#4f46e5;">офертой</span> и <span style="color:#4f46e5;">политикой конфиденциальности</span></div>
+    </div>
     <button class="proto-btn" id="proto-submit">Получить код</button>
     <div class="proto-or">или</div>
     <button class="proto-social" onclick="protoAuthSuccess()">
@@ -773,6 +777,66 @@
       <svg viewBox="0 0 24 24" width="18" height="18"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
       Войти через Google
     </button>
+  </div>
+</div>
+
+<!-- ══ PAYMENT OVERLAY ══ -->
+<style>
+  .proto-pay-overlay {
+    display: none; position: fixed; top:0;left:0;right:0;bottom:0; z-index: 99999;
+    background: rgba(15,23,41,0.6); align-items: center; justify-content: center; padding: 16px;
+  }
+  .proto-pay-overlay.open { display: flex; }
+  .proto-pay-card {
+    background: #fff; border-radius: 20px; width: 100%; max-width: 360px;
+    padding: 28px 24px; box-shadow: 0 8px 48px rgba(0,0,0,0.22); position: relative;
+  }
+  .proto-pay-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .proto-pay-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+  .proto-pay-amount {
+    background: #eef2ff; border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  }
+  .proto-pay-amount span:first-child { font-size: 13px; color: #4f46e5; font-weight: 600; }
+  .proto-pay-amount span:last-child { font-size: 22px; font-weight: 800; color: #111827; }
+  .proto-pay-methods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .proto-pay-method {
+    display: flex; align-items: center; gap: 12px; padding: 13px 14px;
+    border: 1.5px solid #e5e7eb; border-radius: 12px; cursor: pointer;
+    transition: all .15s; font-size: 14px; font-weight: 600;
+  }
+  .proto-pay-method:hover { border-color: #4f46e5; background: #eef2ff; }
+  .proto-pay-method.selected { border-color: #4f46e5; background: #eef2ff; color: #4f46e5; }
+  .proto-pay-method .pm-icon { font-size: 22px; width: 32px; text-align: center; }
+  .proto-pay-btn {
+    width: 100%; padding: 14px; background: #4f46e5; color: #fff; border: none;
+    border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+  }
+  .proto-pay-btn:hover { background: #4338ca; }
+  .proto-pay-secure { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 10px; }
+</style>
+
+<div class="proto-pay-overlay" id="proto-pay-overlay">
+  <div class="proto-pay-card">
+    <div class="proto-pay-title">Оплата записи</div>
+    <div class="proto-pay-sub">Выберите способ оплаты</div>
+    <div class="proto-pay-amount">
+      <span>Бронирование слота</span>
+      <span>5 000 ₽</span>
+    </div>
+    <div class="proto-pay-methods">
+      <div class="proto-pay-method selected" data-method="card">
+        <span class="pm-icon">💳</span>Банковская карта
+      </div>
+      <div class="proto-pay-method" data-method="sbp">
+        <span class="pm-icon">⚡</span>СБП (Система быстрых платежей)
+      </div>
+      <div class="proto-pay-method" data-method="wallet">
+        <span class="pm-icon">📱</span>SberPay / T‑Pay / YooMoney
+      </div>
+    </div>
+    <button class="proto-pay-btn" id="proto-pay-confirm">Оплатить 5 000 ₽</button>
+    <div class="proto-pay-secure">🔒 Защищённая оплата · Данные не хранятся</div>
   </div>
 </div>
 
@@ -1213,17 +1277,43 @@
     }, 2500);
   }
 
+  // Открыть регистрацию с предзаполненными данными из анкеты
+  function openAuthWithPrefill() {
+    // Предзаполнить имя (Q0) и телефон (Q7)
+    const name = state.answers[0] || '';
+    const phone = state.answers[questions.length - 1] || '';
+    const nameEl = document.getElementById('proto-name');
+    const phoneEl = document.getElementById('proto-phone');
+    if (nameEl && name) nameEl.value = name;
+    if (phoneEl && phone) {
+      // Убрать +7 если есть в начале
+      phoneEl.value = phone.replace(/^\+7\s?/, '').replace(/^8/, '');
+    }
+    // Поставить галочку согласия автоматически
+    document.getElementById('proto-agree-box').classList.add('checked');
+    protoAgreed = true;
+    // Переключить на вкладку "Регистрация"
+    document.querySelectorAll('.proto-auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.proto-auth-tab[data-ptab="reg"]').classList.add('active');
+    protoTab = 'reg';
+    document.getElementById('proto-name-field').style.display = '';
+    document.getElementById('proto-submit').textContent = 'Зарегистрироваться';
+    document.getElementById('proto-sms-step').style.display = 'none';
+    protoStep = 'phone';
+    document.getElementById('proto-auth-overlay').classList.add('open');
+  }
+
   document.getElementById('pay-btn').addEventListener('click', () => {
     if (protoAuthed || parentAuthed) {
-      proceedToPay();
+      showPaymentOverlay();
     } else {
-      // Всегда показываем встроенную модалку — работает и в iframe, и напрямую
-      document.getElementById('proto-auth-overlay').classList.add('open');
+      openAuthWithPrefill();
     }
   });
 
   // ── INLINE AUTH MODAL JS ──
   let protoAuthed = false;
+  let protoAgreed = false;
   let protoStep = 'phone';
   let protoTab = 'login';
   let protoTimerActive = false;
@@ -1231,7 +1321,7 @@
   function protoAuthSuccess() {
     protoAuthed = true;
     document.getElementById('proto-auth-overlay').classList.remove('open');
-    proceedToPay();
+    showPaymentOverlay();
   }
 
   document.getElementById('proto-auth-close').addEventListener('click', () => {
@@ -1291,6 +1381,34 @@
   document.getElementById('proto-sms').addEventListener('input', e => {
     e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
     if (e.target.value.length === 6) protoAuthSuccess();
+  });
+
+  // Галочка согласия
+  document.getElementById('proto-agree-row').addEventListener('click', () => {
+    protoAgreed = !protoAgreed;
+    const box = document.getElementById('proto-agree-box');
+    box.style.background = protoAgreed ? '#4f46e5' : '';
+    box.style.borderColor = protoAgreed ? '#4f46e5' : '#d1d5db';
+    box.innerHTML = protoAgreed ? '<span style="color:#fff;font-size:11px;font-weight:700;">✓</span>' : '';
+  });
+
+  // ── PAYMENT OVERLAY ──
+  function showPaymentOverlay() {
+    document.getElementById('proto-pay-overlay').classList.add('open');
+  }
+
+  // Выбор способа оплаты
+  document.querySelectorAll('.proto-pay-method').forEach(m => {
+    m.addEventListener('click', () => {
+      document.querySelectorAll('.proto-pay-method').forEach(x => x.classList.remove('selected'));
+      m.classList.add('selected');
+    });
+  });
+
+  // Кнопка "Оплатить"
+  document.getElementById('proto-pay-confirm').addEventListener('click', () => {
+    document.getElementById('proto-pay-overlay').classList.remove('open');
+    proceedToPay();
   });
 
   // SCREEN 7 — рендер боковых кнопок
