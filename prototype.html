@@ -233,28 +233,28 @@
   }
   .choice-btn:hover { background: var(--indigo); color: #fff; }
   .chat-input-row {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 4px;
     background: #fff; border: 1.5px solid var(--line); border-radius: 22px;
-    padding: 4px 6px 4px 12px;
+    padding: 4px 4px 4px 10px; flex-shrink: 0;
   }
   .chat-input-row input {
-    flex: 1; border: none; outline: none; font-size: 13px; padding: 8px 4px;
+    flex: 1; min-width: 0; border: none; outline: none; font-size: 13px; padding: 8px 2px;
     background: transparent; color: var(--ink); font-family: inherit;
   }
   .chat-icon-btn {
-    width: 34px; height: 34px; border-radius: 50%; border: none;
+    width: 32px; height: 32px; border-radius: 50%; border: none; flex-shrink: 0;
     background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: all .15s ease;
   }
   .chat-icon-btn:hover { background: var(--bg-soft); }
-  .chat-icon-btn svg { width: 16px; height: 16px; stroke: var(--muted); }
+  .chat-icon-btn svg { width: 15px; height: 15px; stroke: var(--muted); }
   .chat-icon-btn.mic.recording { background: #fee2e2; }
   .chat-icon-btn.mic.recording svg { stroke: #dc2626; }
   .chat-send {
-    width: 36px; height: 36px; border-radius: 50%; border: none;
+    width: 34px; height: 34px; border-radius: 50%; border: none; flex-shrink: 0;
     background: var(--indigo); cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
-  .chat-send svg { width: 16px; height: 16px; stroke: #fff; fill: #fff; }
+  .chat-send svg { width: 15px; height: 15px; stroke: #fff; fill: #fff; }
   .chat-send:disabled { background: #b6b9c5; cursor: not-allowed; }
 
   /* SCREEN 4 — slot search */
@@ -406,6 +406,34 @@
   .side-btn-amber { background: #5a7a47; color: #fff; border-top: 1px solid rgba(255,255,255,0.2); }
   .side-btn-amber:hover { background: #4a6a3a; color: #fff; }
   .chat-main-area { flex: 1; min-width: 0; padding: 24px 20px 28px; display: flex; flex-direction: column; }
+
+  /* CARD DETAIL OVERLAY */
+  .card-detail-overlay {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(15,23,41,0.72); align-items: center; justify-content: center;
+  }
+  .card-detail-overlay.open { display: flex; }
+  .card-detail-box {
+    background: #fff; border-radius: 20px; overflow: hidden;
+    max-width: 360px; width: calc(100% - 32px);
+    box-shadow: 0 24px 60px rgba(15,23,41,0.28);
+    max-height: 90vh; display: flex; flex-direction: column;
+  }
+  .card-detail-img { width: 100%; display: block; object-fit: contain; }
+  .card-detail-footer {
+    padding: 16px; border-top: 1px solid var(--line);
+    display: flex; gap: 10px; flex-shrink: 0;
+  }
+  .card-detail-footer .btn-order {
+    flex: 1; background: var(--indigo); color: #fff; border: none;
+    border-radius: 12px; padding: 13px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+  .card-detail-footer .btn-close {
+    background: #f5f7fb; color: var(--muted); border: 1.5px solid var(--line);
+    border-radius: 12px; padding: 13px 16px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
 
   /* CONTROLS */
   .controls { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
@@ -644,6 +672,19 @@
 
   </div>
 
+  <!-- CARD DETAIL OVERLAY -->
+  <div class="card-detail-overlay" id="cardDetailOverlay">
+    <div class="card-detail-box">
+      <div style="overflow-y:auto;flex:1;">
+        <img class="card-detail-img" id="cardDetailImg" src="" alt="Карта" />
+      </div>
+      <div class="card-detail-footer">
+        <button class="btn-order" id="cardDetailOrder">Оформить карту</button>
+        <button class="btn-close" id="cardDetailClose">✕</button>
+      </div>
+    </div>
+  </div>
+
   <div class="step-indicator">Шаг <b id="step-num">1</b> из 8</div>
 
   <div class="controls">
@@ -677,7 +718,7 @@
     { text: "Сколько человек поедет?", placeholder: "Например: 2 взрослых + 1 ребёнок", type: "text", inputmode: "text", autocap: "sentences" },
     { text: "Город проживания и прописки?", placeholder: "Москва, Тверская 12", type: "text", inputmode: "text", autocap: "sentences" },
     { text: "Паспорт 5-летний или 10-летний?", placeholder: "5 или 10", type: "passport_years", inputmode: "numeric", maxlength: 2 },
-    { text: "Номер телефона для связи?", placeholder: "+7 (999) 123-45-67", type: "phone", inputmode: "tel", maxlength: 18 },
+    { text: "Номер телефона для связи?", placeholder: "(999) 123-45-67", type: "phone", inputmode: "tel", maxlength: 18 },
   ];
   const questionsVisa = [
     { text: "Как вас зовут?", placeholder: "Иванов Иван Иванович", type: "name", inputmode: "text", autocap: "words" },
@@ -687,7 +728,7 @@
     { text: "Желаемые даты поездки?", placeholder: "Июль — август 2026", type: "text", inputmode: "text", autocap: "sentences" },
     { text: "Сколько человек поедет?", placeholder: "Например: 2 взрослых + 1 ребёнок", type: "text", inputmode: "text", autocap: "sentences" },
     { text: "Паспорт 5-летний или 10-летний?", placeholder: "5 или 10", type: "passport_years", inputmode: "numeric", maxlength: 2 },
-    { text: "Номер телефона для связи?", placeholder: "+7 (999) 123-45-67", type: "phone", inputmode: "tel", maxlength: 18 },
+    { text: "Номер телефона для связи?", placeholder: "(999) 123-45-67", type: "phone", inputmode: "tel", maxlength: 18 },
   ];
   const questions = (state.mode === 'visa') ? questionsVisa : questionsSlot;
 
@@ -804,7 +845,7 @@
     document.getElementById('q-text').textContent = q.text;
     const input = document.getElementById('q-input');
     input.placeholder = q.placeholder;
-    input.value = state.answers[i] || (q.type === 'phone' ? '+7 (' : '');
+    input.value = state.answers[i] || (q.type === 'phone' ? '+7 ' : '');
     input.classList.remove('invalid');
     document.getElementById('q-error').textContent = '';
     input.setAttribute('inputmode', q.inputmode || 'text');
@@ -848,6 +889,17 @@
     if (e.key === 'Enter') {
       e.preventDefault();
       document.getElementById('q-next').click();
+      return;
+    }
+    // Защита префикса +7 для телефона
+    const q = questions[state.currentQ];
+    if (q.type === 'phone') {
+      const inp = e.currentTarget;
+      const val = inp.value;
+      const sel = inp.selectionStart;
+      if ((e.key === 'Backspace' || e.key === 'Delete') && val.startsWith('+7') && sel <= 3) {
+        e.preventDefault();
+      }
     }
   });
   document.getElementById('q-next').addEventListener('click', () => {
@@ -1131,9 +1183,7 @@
         `;
         cardsDiv.querySelectorAll('.card-mini').forEach(card => {
           card.addEventListener('click', () => {
-            const names = { kg: 'Кыргызстан (Visa Gold/Platinum)', bakai: 'Бакай Банк', ayil: 'Айыл Банк', am: 'Армения (MasterCard)' };
-            addUserMsg(`Интересует: ${names[card.dataset.card] || card.dataset.card}`);
-            setTimeout(() => addBotMsg('Отлично! Менеджер свяжется с вами в течение часа и расскажет подробности. 📞'), 400);
+            openCardDetail(card.dataset.card);
           });
         });
         body.appendChild(cardsDiv);
@@ -1148,7 +1198,7 @@
     body.innerHTML = '';
     renderSideBtns();
 
-    addBotMsg(`Поздравляю, ${getFirstName()}! 🎉<br>Слот закреплён за тобой: <b>14 июля, 10:30</b> · ${countryAcc(state.country.name)}.`);
+    addBotMsg(`Поздравляю, ${getFirstName()}! 🎉<br>Слот закреплён за тобой: <b>14 июля, 10:30</b><br>г. Москва, ул. Садовая-Кудринская, 3<br>${countryAcc(state.country.name)}`);
 
     if (state.slotOnly) {
       // пришли из "Найти слот" в чате — только поздравление, без документов
@@ -1201,7 +1251,10 @@
   function getFirstName() {
     const name = state.answers[0] || '';
     const parts = name.split(/\s+/).filter(Boolean);
-    return parts.length >= 2 ? parts[1] : (parts[0] || 'друг');
+    // Возвращаем Имя Отчество (2-е и 3-е слово из ФИО)
+    if (parts.length >= 3) return parts[1] + ' ' + parts[2];
+    if (parts.length === 2) return parts[1];
+    return parts[0] || 'друг';
   }
   function countryAcc(n) {
     const map = { 'Франция': 'во Францию', 'Италия': 'в Италию', 'Испания': 'в Испанию', 'Болгария': 'в Болгарию' };
@@ -1310,6 +1363,42 @@
   }
   renderQuestion();
   initialShow();
+
+  // CARD DETAIL OVERLAY
+  const cardImages = {
+    kg:    'images/kg.png.jpg',
+    bakai: 'images/bakai.png.jpg',
+    ayil:  'images/ayil.png.jpg',
+    am:    'images/am.png.jpg',
+  };
+  const cardNames = {
+    kg: 'Кыргызстан · Visa Gold/Platinum',
+    bakai: 'Бакай Банк · Gold/Platinum/Infinite',
+    ayil: 'Айыл Банк · Gold/Infinite',
+    am: 'Армения · MasterCard',
+  };
+  let currentCardKey = null;
+
+  function openCardDetail(key) {
+    currentCardKey = key;
+    document.getElementById('cardDetailImg').src = cardImages[key] || '';
+    document.getElementById('cardDetailOverlay').classList.add('open');
+  }
+
+  document.getElementById('cardDetailClose').addEventListener('click', () => {
+    document.getElementById('cardDetailOverlay').classList.remove('open');
+  });
+  document.getElementById('cardDetailOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('cardDetailOverlay')) {
+      document.getElementById('cardDetailOverlay').classList.remove('open');
+    }
+  });
+  document.getElementById('cardDetailOrder').addEventListener('click', () => {
+    document.getElementById('cardDetailOverlay').classList.remove('open');
+    const name = cardNames[currentCardKey] || currentCardKey;
+    addUserMsg(`Хочу оформить: ${name}`);
+    setTimeout(() => addBotMsg('Отлично! Менеджер свяжется с вами в течение часа и расскажет все детали. 📞'), 500);
+  });
 </script>
 
 </body>
