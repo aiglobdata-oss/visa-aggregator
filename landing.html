@@ -1348,12 +1348,6 @@
   document.getElementById('auth-telegram').addEventListener('click', () => loginSuccess('ТГ', currentType));
   document.getElementById('auth-google').addEventListener('click', () => loginSuccess('ГГ', currentType));
 
-  // Слушаем сигнал от прототипа (требует регистрации перед оплатой)
-  window.addEventListener('message', e => {
-    if (e.data && e.data.type === 'require_auth') {
-      openAuthModal(true);
-    }
-  });
 </script>
 
 </body>
