@@ -1786,6 +1786,67 @@
     }
   })();
 
+  // Таймер молчания клиента → через 5 мин показываем "Специалист помог?"
+  let silenceTimer = null;
+  let feedbackShown = false;
+
+  function resetSilenceTimer() {
+    clearTimeout(silenceTimer);
+    if (feedbackShown) return; // уже показали — не сбрасываем
+    // 300000 = 5 минут; для теста можно уменьшить до 30000
+    silenceTimer = setTimeout(showSpecialistFeedback, 300000);
+  }
+
+  function showSpecialistFeedback() {
+    if (feedbackShown) return;
+    feedbackShown = true;
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.id = 'feedback-block';
+    div.style.cssText = 'background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:14px 16px;margin:8px 0;box-shadow:0 2px 8px rgba(0,0,0,0.07);';
+    div.innerHTML = `
+      <div style="font-size:13px;color:#6b7280;margin-bottom:10px;">Специалист помог?</div>
+      <div style="display:flex;gap:8px;">
+        <button id="fb-like" onclick="handleFeedbackLike()" style="flex:1;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:10px;cursor:pointer;font-size:20px;transition:all .15s;">👍</button>
+        <button id="fb-dislike" onclick="handleFeedbackDislike()" style="flex:1;background:#fff0f0;border:1.5px solid #fca5a5;border-radius:12px;padding:10px;cursor:pointer;font-size:20px;transition:all .15s;">👎</button>
+      </div>
+    `;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function handleFeedbackLike() {
+    const block = document.getElementById('feedback-block');
+    if (block) block.remove();
+    feedbackShown = false;
+    addBotMsg('Рады слышать! 🙌 Продолжайте общение со специалистом.');
+    resetSilenceTimer();
+  }
+
+  function handleFeedbackDislike() {
+    const block = document.getElementById('feedback-block');
+    if (block) block.remove();
+    addBotMsg('Не расстраивайтесь — мы найдём вам другого специалиста! Уже ищем… 🔍');
+    setTimeout(() => addBotMsg('Ожидайте — первый свободный специалист подключится к вам.'), 1500);
+    // Broadcast — переназначить клиента другому визовому центру
+    try {
+      const bc = new BroadcastChannel('visaslot_notifications');
+      bc.postMessage({
+        type: 'reassign_request',
+        reqId: window._chatReqId || ('req_' + Date.now()),
+        client: window._chatClientName || 'Клиент',
+        country: '',
+        purpose: 'Переназначение — клиент недоволен специалистом',
+        biometrics: false,
+        slotMode: false,
+        time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
+        qa: [],
+        isReassign: true,
+      });
+      bc.close();
+    } catch(e) {}
+  }
+
   function sendClientMsg() {
     const input = document.getElementById('chat-input');
     if (!input) return;
@@ -1793,6 +1854,7 @@
     if (!text) return;
     addUserMsg(text);
     input.value = '';
+    resetSilenceTimer(); // сброс таймера при каждом сообщении
     try {
       const bc = new BroadcastChannel('visaslot_chat');
       bc.postMessage({
