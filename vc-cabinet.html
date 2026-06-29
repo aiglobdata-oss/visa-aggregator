@@ -807,6 +807,28 @@
   document.body.appendChild(qaModal);
   qaModal.addEventListener('click', e => { if (e.target === qaModal) closeQaModal(); });
 
+  function takeRequest(reqId) {
+    const actionsDiv = document.getElementById('actions-' + reqId);
+    if (!actionsDiv) return;
+    actionsDiv.innerHTML = `
+      <button onclick="openQaModal('${reqId}')" class="btn-xs btn-xs-primary" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Анкета
+      </button>
+      <button class="btn-xs btn-xs-outline" style="display:inline-flex;align-items:center;gap:4px;" onclick="alert('Чат с клиентом — будет в следующей версии')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Чат
+      </button>
+    `;
+    // Обновляем статус строки
+    const tr = actionsDiv.closest('tr');
+    if (tr) {
+      tr.style.background = '';
+      const statusCell = tr.querySelector('.badge-new');
+      if (statusCell) { statusCell.textContent = 'В работе'; statusCell.className = 'badge badge-active'; statusCell.style.animation = ''; }
+    }
+  }
+
   function openQaModal(reqId) {
     const d = requestAnswers[reqId];
     if (!d) return;
@@ -862,9 +884,9 @@
       <td>—</td>
       <td><span class="badge badge-new" style="animation:pulse 1s 5;">Новая</span></td>
       <td>
-        <div class="action-btns">
-          <button class="btn-xs btn-xs-primary">Взять</button>
-          <button onclick="openQaModal('${reqId}')" class="btn-xs btn-xs-outline" style="display:inline-flex;align-items:center;gap:4px;" title="Ответы клиента">
+        <div class="action-btns" id="actions-${reqId}">
+          <button onclick="takeRequest('${reqId}')" class="btn-xs btn-xs-primary">Взять</button>
+          <button onclick="openQaModal('${reqId}')" class="btn-xs btn-xs-primary" style="display:inline-flex;align-items:center;gap:4px;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             Анкета
           </button>
