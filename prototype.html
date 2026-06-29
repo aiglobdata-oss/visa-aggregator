@@ -1833,6 +1833,12 @@
     if (block) block.remove();
     addBotMsg('Не расстраивайтесь — мы найдём вам другого специалиста! Уже ищем… 🔍');
     setTimeout(() => addBotMsg('Ожидайте — первый свободный специалист подключится к вам.'), 1500);
+    // Сначала уведомляем текущий ВЦ о дизлайке — они блокируют этого клиента на день
+    try {
+      const bcD = new BroadcastChannel('visaslot_notifications');
+      bcD.postMessage({ type: 'dislike_notice', reqId: window._chatReqId || '' });
+      bcD.close();
+    } catch(e) {}
     // Broadcast — переназначить клиента другому визовому центру
     try {
       const bc = new BroadcastChannel('visaslot_notifications');
