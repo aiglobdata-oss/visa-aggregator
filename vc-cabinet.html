@@ -831,32 +831,42 @@
     setTimeout(() => { qaModal.style.display = 'none'; }, 300);
   }
 
-  // Добавляет входящую заявку в раздел «Заявки»
+  // Добавляет входящую заявку в таблицу раздела «Заявки»
   function addIncomingRequest(data) {
-    const appsList = document.querySelector('.apps-list');
-    if (!appsList) return;
+    const tbody = document.querySelector('.app-table tbody');
+    if (!tbody) return;
     const reqId = 'req_' + Date.now();
-    requestAnswers[reqId] = data;   // сохраняем ответы
-    const card = document.createElement('div');
-    card.className = 'app-card';
-    card.style.borderLeft = '3px solid var(--indigo)';
+    requestAnswers[reqId] = data;
     const hasQA = data.qa && data.qa.length > 0;
-    card.innerHTML = `
-      <div class="app-header">
-        <span class="app-id">#${Date.now().toString().slice(-4)}</span>
-        <span class="badge badge-new" style="animation:pulse 1s infinite;">Новая</span>
-      </div>
-      <div class="app-name">${data.client || 'Клиент'}</div>
-      <div class="app-meta">${data.country || 'Страна неизвестна'} · ${data.time || ''}</div>
-      <div class="app-footer" style="display:flex;align-items:center;justify-content:space-between;">
-        <span class="app-tag">Визовый специалист</span>
-        ${hasQA ? `<button onclick="openQaModal('${reqId}')" style="display:inline-flex;align-items:center;gap:5px;background:var(--indigo-light);color:var(--indigo);border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          Ответы клиента
-        </button>` : ''}
-      </div>
+    const initials = (data.client || 'КЛ').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'background:var(--indigo-light);animation:fadeIn .4s ease;';
+    tr.innerHTML = `
+      <td>
+        <div class="client-cell">
+          <div class="client-ava" style="background:var(--indigo);color:#fff;">${initials}</div>
+          <div>
+            <div style="font-weight:600;">${data.client || 'Клиент'}</div>
+            <div style="font-size:12px;color:var(--muted);">Новая заявка · ${data.time || ''}</div>
+          </div>
+        </div>
+      </td>
+      <td>${data.country || '—'}</td>
+      <td>Визовый специалист</td>
+      <td>${data.time || new Date().toLocaleDateString('ru-RU')}</td>
+      <td>—</td>
+      <td><span class="badge badge-new" style="animation:pulse 1s 5;">Новая</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-xs btn-xs-primary">Взять</button>
+          ${hasQA ? `<button onclick="openQaModal('${reqId}')" class="btn-xs btn-xs-outline" style="display:inline-flex;align-items:center;gap:4px;" title="Ответы клиента">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Анкета
+          </button>` : ''}
+        </div>
+      </td>
     `;
-    appsList.prepend(card);
+    tbody.prepend(tr);
     // Обновляем счётчик в навигации
     const badge = document.querySelector('.nav-item[data-section="applications"] .nav-badge');
     if (badge) badge.textContent = parseInt(badge.textContent || 0) + 1;
