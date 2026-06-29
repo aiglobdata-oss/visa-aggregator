@@ -1538,6 +1538,17 @@
     btnCenter.addEventListener('click', () => {
       fadeBtn(btnCenter);
       addUserMsg('С помощью визового центра');
+      // Отправляем уведомление в кабинет ВЦ
+      try {
+        const bc = new BroadcastChannel('visaslot_notifications');
+        bc.postMessage({
+          type: 'new_request',
+          client: (state.answers && state.answers[0]) || 'Клиент',
+          country: (state.answers && state.answers[1]) || 'Неизвестно',
+          time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
+        });
+        bc.close();
+      } catch(e) {}
       setTimeout(() => {
         addBotMsg('Понял! Подключаю специалиста визового центра. 🤝');
         setTimeout(() => addFeedbackBtns(), 1500);
