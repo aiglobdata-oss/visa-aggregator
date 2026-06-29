@@ -201,6 +201,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
       Платежи
     </div>
+    <div class="nav-item" data-section="managers">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M20 8h2M22 11h-2"/></svg>
+      Менеджеры
+    </div>
     <div class="nav-divider"></div>
     <div class="nav-item" data-section="settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -390,6 +394,54 @@
       </table>
     </div>
 
+    <!-- ── МЕНЕДЖЕРЫ ── -->
+    <div class="section" id="section-managers">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div class="section-title">Менеджеры</div>
+        <button onclick="openAddManager()" style="display:flex;align-items:center;gap:8px;background:var(--indigo);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Добавить менеджера
+        </button>
+      </div>
+
+      <div id="managers-list" style="display:flex;flex-direction:column;gap:12px;">
+        <!-- Менеджеры рендерятся JS -->
+      </div>
+      <div id="managers-empty" style="text-align:center;padding:48px 0;color:var(--muted);">
+        <div style="font-size:40px;margin-bottom:12px;">👤</div>
+        <div style="font-weight:600;margin-bottom:6px;">Менеджеры не добавлены</div>
+        <div style="font-size:14px;">Добавьте менеджеров — они будут получать заявки от клиентов</div>
+      </div>
+    </div>
+
+    <!-- Модал: добавить менеджера -->
+    <div id="add-manager-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(15,23,41,0.55);align-items:center;justify-content:center;padding:16px;">
+      <div style="background:#fff;border-radius:20px;width:100%;max-width:440px;padding:32px;position:relative;">
+        <button onclick="closeAddManager()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
+        <div style="font-size:18px;font-weight:700;margin-bottom:24px;">Добавить менеджера</div>
+
+        <!-- Аватарка -->
+        <div style="text-align:center;margin-bottom:20px;">
+          <div id="mgr-avatar-preview" onclick="document.getElementById('mgr-avatar-input').click()" style="width:80px;height:80px;border-radius:50%;background:var(--indigo-light);border:2px dashed var(--indigo);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;cursor:pointer;font-size:28px;">👤</div>
+          <div style="font-size:13px;color:var(--muted);">Нажмите чтобы загрузить фото</div>
+          <input type="file" id="mgr-avatar-input" accept="image/*" style="display:none;" onchange="previewAvatar(this)">
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Имя и фамилия</label>
+          <input id="mgr-name" type="text" placeholder="Анна Иванова" style="width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;outline:none;">
+        </div>
+        <div style="margin-bottom:24px;">
+          <label style="font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Контактный телефон</label>
+          <div style="display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;">
+            <span style="padding:11px 12px;background:#f9fafb;color:var(--muted);font-size:15px;border-right:1px solid var(--line);">+7</span>
+            <input id="mgr-phone" type="tel" placeholder="(999) 123-45-67" style="flex:1;padding:11px 14px;border:none;font-size:15px;font-family:inherit;outline:none;">
+          </div>
+        </div>
+        <button onclick="saveManager()" style="width:100%;padding:13px;background:var(--indigo);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Добавить</button>
+      </div>
+    </div>
+
     <!-- ── НАСТРОЙКИ ── -->
     <div class="section" id="section-settings">
       <div class="section-title" style="margin-bottom:24px;">Настройки</div>
@@ -439,6 +491,84 @@
   document.getElementById('nav-logout').addEventListener('click', () => {
     window.location.href = 'landing.html';
   });
+
+  // ── МЕНЕДЖЕРЫ ──
+  let managers = [
+    { id: 1, name: 'Анна Петрова', phone: '(999) 111-22-33', avatar: null, active: true, deals: 14 },
+    { id: 2, name: 'Сергей Волков', phone: '(999) 444-55-66', avatar: null, active: true, deals: 9 },
+  ];
+  let mgrAvatarData = null;
+
+  function renderManagers() {
+    const list = document.getElementById('managers-list');
+    const empty = document.getElementById('managers-empty');
+    if (!list) return;
+    if (managers.length === 0) { list.innerHTML = ''; empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    list.innerHTML = managers.map(m => `
+      <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--indigo-light);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;">
+          ${m.avatar ? `<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;">` : '👤'}
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:15px;">${m.name}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px;">+7 ${m.phone} · ${m.deals} сделок</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div onclick="toggleManager(${m.id})" style="width:40px;height:22px;border-radius:11px;background:${m.active ? 'var(--indigo)' : '#d1d5db'};cursor:pointer;position:relative;transition:background .2s;">
+            <div style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;${m.active ? 'right:2px' : 'left:2px'};transition:all .2s;"></div>
+          </div>
+          <button onclick="deleteManager(${m.id})" style="background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Удалить</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function toggleManager(id) {
+    const m = managers.find(m => m.id === id);
+    if (m) { m.active = !m.active; renderManagers(); }
+  }
+
+  function deleteManager(id) {
+    if (!confirm('Удалить менеджера?')) return;
+    managers = managers.filter(m => m.id !== id);
+    renderManagers();
+  }
+
+  function openAddManager() {
+    mgrAvatarData = null;
+    document.getElementById('mgr-name').value = '';
+    document.getElementById('mgr-phone').value = '';
+    document.getElementById('mgr-avatar-preview').innerHTML = '👤';
+    document.getElementById('add-manager-overlay').style.display = 'flex';
+  }
+
+  function closeAddManager() {
+    document.getElementById('add-manager-overlay').style.display = 'none';
+  }
+
+  function previewAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      mgrAvatarData = e.target.result;
+      document.getElementById('mgr-avatar-preview').innerHTML = `<img src="${mgrAvatarData}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function saveManager() {
+    const name = document.getElementById('mgr-name').value.trim();
+    const phone = document.getElementById('mgr-phone').value.trim();
+    if (!name) { document.getElementById('mgr-name').style.borderColor='#dc2626'; setTimeout(()=>document.getElementById('mgr-name').style.borderColor='',1500); return; }
+    if (!phone) { document.getElementById('mgr-phone').style.borderColor='#dc2626'; setTimeout(()=>document.getElementById('mgr-phone').style.borderColor='',1500); return; }
+    managers.push({ id: Date.now(), name, phone, avatar: mgrAvatarData, active: true, deals: 0 });
+    renderManagers();
+    closeAddManager();
+  }
+
+  renderManagers();
 </script>
 </body>
 </html>
