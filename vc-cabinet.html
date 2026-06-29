@@ -1081,7 +1081,7 @@
   function addIncomingRequest(data) {
     const tbody = document.querySelector('.app-table tbody');
     if (!tbody) return;
-    const reqId = 'req_' + Date.now();
+    const reqId = data.reqId || ('req_' + Date.now());
     requestAnswers[reqId] = data;
     const initials = (data.client || 'КЛ').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
     // Найти страну из qa: ищем вопрос со словом "страна" или берём второй ответ если это visa-режим
