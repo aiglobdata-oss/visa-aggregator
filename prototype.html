@@ -1771,7 +1771,8 @@
       if (d.type === 'specialist_joined') {
         addBotMsg('🤝 Визовый специалист подключился и готов помочь!');
         feedbackShown = false;
-        resetSilenceTimer(); // таймер стартует когда специалист подключился
+        specialistConnected = true; // разрешаем таймер
+        resetSilenceTimer();
       }
       if (d.type === 'manager_message') {
         addSpecialistMsg(d.text);
@@ -1791,11 +1792,13 @@
   // Таймер молчания клиента → через 1 минуту показываем "Специалист помог?"
   let silenceTimer = null;
   let feedbackShown = false;
+  let specialistConnected = false; // таймер работает ТОЛЬКО после подключения специалиста
 
   function resetSilenceTimer() {
     clearTimeout(silenceTimer);
+    if (!specialistConnected) return; // специалист ещё не подключился — не стартуем
     if (feedbackShown) return;
-    silenceTimer = setTimeout(showSpecialistFeedback, 60000); // 1 минута
+    silenceTimer = setTimeout(showSpecialistFeedback, 60000); // 1 минута бездействия
   }
 
   function showSpecialistFeedback() {
