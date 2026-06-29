@@ -110,6 +110,12 @@
   .btn-primary { background: var(--indigo); color: #fff; box-shadow: 0 6px 20px rgba(79,70,229,0.28); }
   .btn-ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
   .btn-outline { background: none; color: var(--indigo); border: 1.5px solid var(--indigo); }
+  .show-mobile { display: none; }
+  @media (max-width: 600px) {
+    .hide-mobile { display: none; }
+    .show-mobile { display: inline; }
+    .btn { padding: 8px 12px; font-size: 13px; }
+  }
   .btn-lg { padding: 15px 30px; font-size: 16px; }
 
   /* HERO */
@@ -572,7 +578,7 @@
       <button id="btn-login-open" class="btn btn-outline">Войти</button>
       <!-- Залогинен (скрыт по умолчанию) -->
       <div id="header-avatar" style="display:none;width:36px;height:36px;border-radius:50%;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;display:none;align-items:center;justify-content:center;cursor:pointer;" onclick="goToCabinet()">ИИ</div>
-      <a href="centers.html" class="btn btn-primary" style="color:#fff!important;text-decoration:none;">Для визового центра</a>
+      <a href="centers.html" class="btn btn-primary" style="color:#fff!important;text-decoration:none;"><span class="hide-mobile">Для визового центра</span><span class="show-mobile">Для ВЦ</span></a>
     </nav>
   </div>
 </header>
