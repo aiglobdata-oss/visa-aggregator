@@ -1563,6 +1563,7 @@
           country: countryVal,
           purpose: purposeVal,
           biometrics: state.biometrics,
+          slotMode: state.mode === 'slot',
           time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
           qa,
         });
