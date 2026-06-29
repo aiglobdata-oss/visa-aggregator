@@ -1225,11 +1225,10 @@
     ava.style.display = 'flex';
     ava.textContent = initials;
     closeAuthModal();
-    // Если ждали оплату — разблокируем (сигнал в iframe)
-    const iframe = document.querySelector('#demoOverlay iframe');
-    if (iframe) {
-      try { iframe.contentWindow.postMessage({ type: 'auth_success' }, '*'); } catch(e) {}
-    }
+    // Редирект в личный кабинет
+    setTimeout(() => {
+      window.location.href = type === 'center' ? 'vc-cabinet.html' : 'cabinet.html';
+    }, 300);
   }
 
   function goToCabinet() {
