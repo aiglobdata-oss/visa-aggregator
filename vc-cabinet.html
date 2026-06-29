@@ -249,52 +249,52 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr data-status="new">
             <td><div class="client-cell"><div class="client-ava">ИИ</div><div><div style="font-weight:600;">Иван Иванов</div><div style="font-size:12px;color:var(--muted);">+7 (999) 123-45-67</div></div></div></td>
             <td>🇮🇹 Италия</td>
             <td>Шенген, туризм</td>
             <td>27 июня 2026</td>
             <td>14 июля, 10:30</td>
             <td><span class="badge badge-new">Новая</span></td>
-            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline">Чат</button></div></td>
+            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-1','Иван Иванов')">Чат</button></div></td>
           </tr>
-          <tr>
+          <tr data-status="new">
             <td><div class="client-cell"><div class="client-ava">АП</div><div><div style="font-weight:600;">Анна Петрова</div><div style="font-size:12px;color:var(--muted);">+7 (916) 234-56-78</div></div></div></td>
             <td>🇫🇷 Франция</td>
             <td>Шенген, туризм</td>
             <td>26 июня 2026</td>
             <td>18 июля, 09:00</td>
             <td><span class="badge badge-new">Новая</span></td>
-            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline">Чат</button></div></td>
+            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-2','Анна Петрова')">Чат</button></div></td>
           </tr>
-          <tr>
+          <tr data-status="new">
             <td><div class="client-cell"><div class="client-ava">СК</div><div><div style="font-weight:600;">Сергей Козлов</div><div style="font-size:12px;color:var(--muted);">+7 (903) 345-67-89</div></div></div></td>
             <td>🇪🇸 Испания</td>
             <td>Шенген, бизнес</td>
             <td>25 июня 2026</td>
             <td>21 июля, 11:00</td>
             <td><span class="badge badge-new">Новая</span></td>
-            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline">Чат</button></div></td>
+            <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-3','Сергей Козлов')">Чат</button></div></td>
           </tr>
-          <tr>
+          <tr data-status="active">
             <td><div class="client-cell"><div class="client-ava">МС</div><div><div style="font-weight:600;">Мария Смирнова</div><div style="font-size:12px;color:var(--muted);">+7 (926) 456-78-90</div></div></div></td>
             <td>🇩🇪 Германия</td>
             <td>Шенген, учёба</td>
             <td>24 июня 2026</td>
             <td>10 июля, 14:00</td>
             <td><span class="badge badge-active">В работе</span></td>
-            <td><div class="action-btns"><button class="btn-xs btn-xs-outline">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
+            <td><div class="action-btns"><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-4','Мария Смирнова')">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
           </tr>
-          <tr>
+          <tr data-status="active">
             <td><div class="client-cell"><div class="client-ava">ДВ</div><div><div style="font-weight:600;">Дмитрий Васильев</div><div style="font-size:12px;color:var(--muted);">+7 (985) 567-89-01</div></div></div></td>
             <td>🇳🇱 Нидерланды</td>
             <td>Шенген, туризм</td>
             <td>23 июня 2026</td>
             <td>8 июля, 10:00</td>
             <td><span class="badge badge-active">В работе</span></td>
-            <td><div class="action-btns"><button class="btn-xs btn-xs-outline">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
+            <td><div class="action-btns"><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-5','Дмитрий Васильев')">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
           </tr>
-          <tr>
+          <tr data-status="done">
             <td><div class="client-cell"><div class="client-ava">ОН</div><div><div style="font-weight:600;">Ольга Новикова</div><div style="font-size:12px;color:var(--muted);">+7 (977) 678-90-12</div></div></div></td>
             <td>🇨🇿 Чехия</td>
             <td>Шенген, туризм</td>
@@ -479,29 +479,123 @@
     });
   });
 
-  // Filter buttons
+  // Filter buttons — используем data-status на <tr>
   function applyFilter(filter) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.filter-btn[data-filter="${filter}"]`).classList.add('active');
     document.querySelectorAll('.app-table tbody tr').forEach(tr => {
-      const badge = tr.querySelector('.badge');
-      if (!badge) { tr.style.display = ''; return; }
-      const cls = badge.className;
-      if (filter === 'all') {
-        tr.style.display = '';
-      } else if (filter === 'new') {
-        tr.style.display = cls.includes('badge-new') ? '' : 'none';
-      } else if (filter === 'active') {
-        tr.style.display = cls.includes('badge-active') ? '' : 'none';
-      } else if (filter === 'done') {
-        tr.style.display = cls.includes('badge-done') ? '' : 'none';
-      }
+      const s = tr.dataset.status || 'new';
+      tr.style.display = (filter === 'all' || filter === s) ? '' : 'none';
     });
   }
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
   });
+
+  // ── ЧАТ-ПАНЕЛЬ ──
+  const chatMessages = {}; // reqId → [{from, text, time}]
+
+  // HTML панели
+  const chatPanel = document.createElement('div');
+  chatPanel.id = 'chat-panel';
+  chatPanel.style.cssText = 'display:none;position:fixed;bottom:0;right:24px;width:340px;height:480px;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 32px rgba(0,0,0,0.18);z-index:9990;display:none;flex-direction:column;';
+  chatPanel.innerHTML = `
+    <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;background:var(--indigo);border-radius:16px 16px 0 0;">
+      <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;" id="chat-panel-initials">КЛ</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;color:#fff;" id="chat-panel-name">Клиент</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.75);">● онлайн</div>
+      </div>
+      <button onclick="closeChatPanel()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;opacity:0.8;">✕</button>
+    </div>
+    <div id="chat-panel-body" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:#f9fafb;"></div>
+    <div style="padding:10px 12px;border-top:1px solid var(--line);display:flex;gap:8px;background:#fff;border-radius:0 0 0 0;">
+      <input id="chat-panel-input" placeholder="Напишите сообщение..." style="flex:1;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;font-family:inherit;outline:none;" onkeydown="if(event.key==='Enter')sendChatMsg()">
+      <button onclick="sendChatMsg()" style="background:var(--indigo);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer;">→</button>
+    </div>
+  `;
+  document.body.appendChild(chatPanel);
+
+  let activeChatReqId = null;
+
+  function openChatPanel(reqId, clientName) {
+    activeChatReqId = reqId;
+    if (!chatMessages[reqId]) chatMessages[reqId] = [];
+    document.getElementById('chat-panel-name').textContent = clientName || 'Клиент';
+    const initials = (clientName || 'КЛ').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('chat-panel-initials').textContent = initials;
+    renderChatMessages(reqId);
+    chatPanel.style.display = 'flex';
+    // Уведомляем клиента что специалист вошёл в чат
+    try {
+      const bc = new BroadcastChannel('visaslot_chat');
+      bc.postMessage({ type: 'specialist_joined', reqId });
+      bc.close();
+    } catch(e) {}
+  }
+
+  function closeChatPanel() {
+    chatPanel.style.display = 'none';
+    activeChatReqId = null;
+  }
+
+  function renderChatMessages(reqId) {
+    const body = document.getElementById('chat-panel-body');
+    const msgs = chatMessages[reqId] || [];
+    if (msgs.length === 0) {
+      body.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:13px;margin-top:40px;">Начните диалог с клиентом</div>`;
+      return;
+    }
+    body.innerHTML = msgs.map(m => {
+      const isManager = m.from === 'manager';
+      return `<div style="display:flex;justify-content:${isManager ? 'flex-end' : 'flex-start'};">
+        <div style="max-width:80%;background:${isManager ? 'var(--indigo)' : '#fff'};color:${isManager ? '#fff' : 'var(--ink)'};border-radius:${isManager ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};padding:8px 12px;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <div>${m.text}</div>
+          <div style="font-size:10px;opacity:0.65;margin-top:3px;text-align:right;">${m.time}</div>
+        </div>
+      </div>`;
+    }).join('');
+    body.scrollTop = 99999;
+  }
+
+  function sendChatMsg() {
+    const input = document.getElementById('chat-panel-input');
+    const text = input.value.trim();
+    if (!text || !activeChatReqId) return;
+    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    if (!chatMessages[activeChatReqId]) chatMessages[activeChatReqId] = [];
+    chatMessages[activeChatReqId].push({ from: 'manager', text, time });
+    renderChatMessages(activeChatReqId);
+    input.value = '';
+    // Отправляем клиенту через BroadcastChannel
+    try {
+      const bc = new BroadcastChannel('visaslot_chat');
+      bc.postMessage({ type: 'manager_message', text, time, reqId: activeChatReqId });
+      bc.close();
+    } catch(e) {}
+  }
+
+  // Получаем сообщения от клиента
+  try {
+    const chatBc = new BroadcastChannel('visaslot_chat');
+    chatBc.addEventListener('message', e => {
+      const d = e.data;
+      if (!d) return;
+      if (d.type === 'client_message') {
+        const reqId = d.reqId || activeChatReqId;
+        if (!reqId) return;
+        if (!chatMessages[reqId]) chatMessages[reqId] = [];
+        chatMessages[reqId].push({ from: 'client', text: d.text, time: d.time });
+        playTing();
+        if (activeChatReqId === reqId) renderChatMessages(reqId);
+        else {
+          // Показать тост
+          showToast({ client: d.clientName || 'Клиент', country: '', time: d.time, _chatMsg: d.text, _reqId: reqId });
+        }
+      }
+    });
+  } catch(e) {}
 
   // Logout
   document.getElementById('nav-logout').addEventListener('click', () => {
@@ -831,15 +925,16 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         Анкета
       </button>
-      <button class="btn-xs btn-xs-outline" style="display:inline-flex;align-items:center;gap:4px;" onclick="alert('Чат с клиентом — будет в следующей версии')">
+      <button onclick="openChatPanel('${reqId}', '${(requestAnswers[reqId]||{}).client||'Клиент'}')" class="btn-xs btn-xs-outline" style="display:inline-flex;align-items:center;gap:4px;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
         Чат
       </button>
     `;
-    // Обновляем статус строки
+    // Обновляем статус строки и data-status для фильтра
     const tr = actionsDiv.closest('tr');
     if (tr) {
       tr.style.background = '';
+      tr.dataset.status = 'active';
       const statusCell = tr.querySelector('.badge-new');
       if (statusCell) { statusCell.textContent = 'В работе'; statusCell.className = 'badge badge-active'; statusCell.style.animation = ''; }
     }
@@ -899,6 +994,7 @@
       if (countryQ && countryQ.a !== '—') countryVal = countryQ.a;
     }
     const tr = document.createElement('tr');
+    tr.dataset.status = 'new';
     tr.style.cssText = 'background:var(--indigo-light);animation:fadeIn .4s ease;';
     tr.innerHTML = `
       <td>
@@ -911,7 +1007,7 @@
         </div>
       </td>
       <td>${countryVal}</td>
-      <td>Визовый специалист</td>
+      <td>${data.purpose || 'Визовый специалист'}</td>
       <td>${data.time || new Date().toLocaleDateString('ru-RU')}</td>
       <td>—</td>
       <td><span class="badge badge-new" style="animation:pulse 1s 5;">Новая</span></td>

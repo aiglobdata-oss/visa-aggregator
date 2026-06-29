@@ -1543,13 +1543,19 @@
       try {
         const bc = new BroadcastChannel('visaslot_notifications');
         const qa = questions.map((q, i) => ({ q: q.text, a: state.answers[i] || '—' }));
-        // Ищем страну по тексту вопроса, не по индексу
         const countryQ = questions.find(q => /страна|country/i.test(q.text));
         const countryVal = countryQ ? (state.answers[questions.indexOf(countryQ)] || '—') : '—';
+        const purposeQ = questions.find(q => /цель|purpose/i.test(q.text));
+        const purposeVal = purposeQ ? (state.answers[questions.indexOf(purposeQ)] || '') : '';
+        const reqId = 'req_' + Date.now();
+        window._chatReqId = reqId;
+        window._chatClientName = (state.answers && state.answers[0]) || 'Клиент';
         bc.postMessage({
           type: 'new_request',
-          client: (state.answers && state.answers[0]) || 'Клиент',
+          reqId,
+          client: window._chatClientName,
           country: countryVal,
+          purpose: purposeVal,
           time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
           qa,
         });
@@ -1725,6 +1731,71 @@
   function countryAcc(n) {
     const map = { 'Франция': 'во Францию', 'Италия': 'в Италию', 'Испания': 'в Испанию', 'Болгария': 'в Болгарию' };
     return map[n] || n;
+  }
+
+  // Специальное сообщение от визового специалиста (с аватаркой)
+  function addSpecialistMsg(text) {
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.style.cssText = 'border-left:3px solid var(--indigo);background:#eef2ff;';
+    div.innerHTML = `<div style="font-size:10px;font-weight:700;color:var(--indigo);margin-bottom:4px;text-transform:uppercase;">Визовый специалист</div>${text}`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    // звук входящего
+    try {
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=880;
+      g.gain.setValueAtTime(0.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.6);
+      o.start(); o.stop(ctx.currentTime+0.6);
+    } catch(e){}
+  }
+
+  // Listener: сообщения от менеджера
+  try {
+    const chatBcClient = new BroadcastChannel('visaslot_chat');
+    chatBcClient.addEventListener('message', e => {
+      const d = e.data;
+      if (!d) return;
+      if (d.type === 'specialist_joined') {
+        addBotMsg('🤝 Визовый специалист подключился и готов помочь!');
+      }
+      if (d.type === 'manager_message') {
+        addSpecialistMsg(d.text);
+      }
+    });
+  } catch(e) {}
+
+  // Перехватываем input в чате → отправляем менеджеру
+  document.getElementById('chat-input') && (() => {
+    const origSend = document.getElementById('chat-send');
+    if (origSend) {
+      origSend.addEventListener('click', sendClientMsg);
+      document.getElementById('chat-input').addEventListener('keydown', e => { if(e.key==='Enter') sendClientMsg(); });
+    }
+  })();
+
+  function sendClientMsg() {
+    const input = document.getElementById('chat-input');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    addUserMsg(text);
+    input.value = '';
+    try {
+      const bc = new BroadcastChannel('visaslot_chat');
+      bc.postMessage({
+        type: 'client_message',
+        text,
+        reqId: window._chatReqId || null,
+        clientName: window._chatClientName || 'Клиент',
+        time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
+      });
+      bc.close();
+    } catch(e) {}
   }
 
   function addBotMsg(html) {
