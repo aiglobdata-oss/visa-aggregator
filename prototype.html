@@ -1863,11 +1863,49 @@
       addBotMsg('Принял! 👌 Передал визовому специалисту — он скоро ответит.');
     }, 800);
   }
-  // chat attach (mock)
-  document.getElementById('chat-attach').addEventListener('click', () => {
-    const fakeFile = ['pasport_scan.jpg', 'spravka.pdf', 'foto_3x4.jpg'][Math.floor(Math.random() * 3)];
-    addUserMsg(`📎 ${fakeFile} (загружен)`);
-    setTimeout(() => addBotMsg('Получил файл, передам специалисту 👍'), 600);
+  // Реальная скрепка — file input
+  const attachFileInput = document.createElement('input');
+  attachFileInput.type = 'file';
+  attachFileInput.accept = 'image/*,.pdf,.doc,.docx,.xls,.xlsx';
+  attachFileInput.style.display = 'none';
+  document.body.appendChild(attachFileInput);
+
+  document.getElementById('chat-attach').addEventListener('click', () => attachFileInput.click());
+
+  attachFileInput.addEventListener('change', () => {
+    const file = attachFileInput.files[0];
+    if (!file) return;
+    attachFileInput.value = '';
+    const isImg = file.type.startsWith('image/');
+    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    if (isImg) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = `<img src="${e.target.result}" style="max-width:200px;border-radius:10px;display:block;"><span class="chat-msg-time">${time}</span>`;
+        document.getElementById('chat-body').appendChild(div);
+        document.getElementById('chat-body').scrollTop = 99999;
+        if (window._chatReqId) {
+          const bc = new BroadcastChannel('visaslot_chat');
+          bc.postMessage({ type: 'client_file', fileType: 'image', src: e.target.result, name: file.name, time, reqId: window._chatReqId, clientName: window._chatClientName });
+          bc.close();
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const sizeKb = Math.round(file.size / 1024) + ' КБ';
+      const div = document.createElement('div');
+      div.className = 'chat-msg user';
+      div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;"><span style="font-size:18px;">📄</span><div><div style="font-size:13px;font-weight:600;">${file.name}</div><div style="font-size:11px;opacity:0.75;">${sizeKb}</div></div></div><span class="chat-msg-time">${time}</span>`;
+      document.getElementById('chat-body').appendChild(div);
+      document.getElementById('chat-body').scrollTop = 99999;
+      if (window._chatReqId) {
+        const bc = new BroadcastChannel('visaslot_chat');
+        bc.postMessage({ type: 'client_file', fileType: 'doc', name: file.name, size: sizeKb, time, reqId: window._chatReqId, clientName: window._chatClientName });
+        bc.close();
+      }
+    }
   });
   // chat mic
   bindMic(document.getElementById('chat-mic'), document.getElementById('chat-input'));

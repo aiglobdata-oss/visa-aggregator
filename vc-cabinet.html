@@ -658,14 +658,22 @@
     chatBc.addEventListener('message', e => {
       const d = e.data;
       if (!d) return;
-      if (d.type === 'client_message') {
+      if (d.type === 'client_message' || d.type === 'client_file') {
         const reqId = d.reqId || activeChatReqId;
         if (!reqId) return;
         if (!chatMessages[reqId]) chatMessages[reqId] = [];
-        chatMessages[reqId].push({ from: 'client', text: d.text, time: d.time });
+        if (d.type === 'client_file') {
+          if (d.fileType === 'image') {
+            chatMessages[reqId].push({ from: 'client', type: 'image', src: d.src, name: d.name, time: d.time });
+          } else {
+            chatMessages[reqId].push({ from: 'client', type: 'file', name: d.name, size: d.size, time: d.time });
+          }
+        } else {
+          chatMessages[reqId].push({ from: 'client', text: d.text, time: d.time });
+        }
         playTing();
         if (activeChatReqId === reqId) renderChatMessages(reqId);
-        else showChatToast(d);
+        else showChatToast({ ...d, text: d.text || '📎 ' + (d.name || 'файл') });
       }
     });
   } catch(e) {}
@@ -1104,9 +1112,9 @@
         </div>
       </td>
       <td>${countryVal}</td>
-      <td>${data.slotMode ? '🎫 Слот куплен · ' + (data.purpose || '') : (data.purpose || 'Визовый специалист')}</td>
+      <td>${data.purpose || 'Визовый специалист'}</td>
       <td>${data.time || new Date().toLocaleDateString('ru-RU')}</td>
-      <td>—</td>
+      <td>${data.slotMode ? '<span style="display:inline-flex;align-items:center;gap:4px;background:#ede9fe;color:#6d28d9;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;">🎫 Слот куплен</span>' : '—'}</td>
       <td><span class="badge badge-new" style="animation:pulse 1s 5;">Новая</span></td>
       <td>
         <div class="action-btns" id="actions-${reqId}">
