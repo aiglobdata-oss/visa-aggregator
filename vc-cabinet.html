@@ -607,23 +607,74 @@
     document.getElementById('chat-panel-input').focus();
   }
 
+  // Ресайз до 1280×720
+  function resizeImageMgr(dataUrl, cb) {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > 1280 || h > 720) {
+        const r = Math.min(1280/w, 720/h);
+        w = Math.round(w*r); h = Math.round(h*r);
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(c.toDataURL('image/jpeg', 0.88));
+    };
+    img.src = dataUrl;
+  }
+
+  let managerPendingFile = null;
+
+  function showManagerFilePreview(data) {
+    managerPendingFile = data;
+    let bar = document.getElementById('mgr-file-preview');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'mgr-file-preview';
+      bar.style.cssText = 'background:#f9fafb;border-top:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:10px;';
+      const inputArea = chatPanel.querySelector('div[style*="padding:10px 12px"]');
+      if (inputArea) chatPanel.insertBefore(bar, inputArea);
+    }
+    if (data.type === 'image') {
+      bar.innerHTML = `<img src="${data.src}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;"><div style="font-size:12px;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${data.name}</div><button onclick="cancelManagerFile()" style="width:22px;height:22px;border-radius:50%;background:#9ca3af;border:none;color:#fff;font-size:13px;cursor:pointer;line-height:1;">✕</button>`;
+    } else {
+      bar.innerHTML = `<span style="font-size:22px;">📄</span><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${data.name}</div><div style="font-size:11px;color:var(--muted);">${data.size}</div></div><button onclick="cancelManagerFile()" style="width:22px;height:22px;border-radius:50%;background:#9ca3af;border:none;color:#fff;font-size:13px;cursor:pointer;line-height:1;">✕</button>`;
+    }
+  }
+
+  function cancelManagerFile() {
+    managerPendingFile = null;
+    const bar = document.getElementById('mgr-file-preview');
+    if (bar) bar.remove();
+  }
+
+  function sendManagerPendingFile() {
+    if (!managerPendingFile || !activeChatReqId) return;
+    const data = managerPendingFile;
+    cancelManagerFile();
+    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    if (!chatMessages[activeChatReqId]) chatMessages[activeChatReqId] = [];
+    chatMessages[activeChatReqId].push({ from: 'manager', type: data.type, src: data.src, name: data.name, size: data.size, time });
+    renderChatMessages(activeChatReqId);
+  }
+
   function attachFile(input, type) {
     const file = input.files[0];
     if (!file) return;
+    // сбросить значение input чтобы можно было выбрать тот же файл повторно
+    input.value = '';
     document.getElementById('chat-plus-menu').style.display = 'none';
-    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
-    const isImg = type === 'photo';
-    if (!chatMessages[activeChatReqId]) chatMessages[activeChatReqId] = [];
-    if (isImg) {
+    if (type === 'photo') {
       const reader = new FileReader();
       reader.onload = e => {
-        chatMessages[activeChatReqId].push({ from: 'manager', type: 'image', src: e.target.result, time });
-        renderChatMessages(activeChatReqId);
+        resizeImageMgr(e.target.result, resized => {
+          showManagerFilePreview({ type: 'image', src: resized, name: file.name });
+        });
       };
       reader.readAsDataURL(file);
     } else {
-      chatMessages[activeChatReqId].push({ from: 'manager', type: 'file', name: file.name, size: Math.round(file.size/1024) + ' КБ', time });
-      renderChatMessages(activeChatReqId);
+      showManagerFilePreview({ type: 'file', name: file.name, size: Math.round(file.size/1024) + ' КБ' });
     }
   }
 
@@ -636,6 +687,8 @@
   });
 
   function sendChatMsg() {
+    // если есть файл на превью — отправляем его
+    if (managerPendingFile) { sendManagerPendingFile(); return; }
     const input = document.getElementById('chat-panel-input');
     const text = input.value.trim();
     if (!text || !activeChatReqId) return;

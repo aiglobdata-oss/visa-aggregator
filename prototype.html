@@ -1802,6 +1802,7 @@
   }
 
   function showSpecialistFeedback() {
+    if (!specialistConnected) return; // двойная защита
     if (feedbackShown) return;
     feedbackShown = true;
     const body = document.getElementById('chat-body');
@@ -1938,39 +1939,103 @@
 
   document.getElementById('chat-attach').addEventListener('click', () => attachFileInput.click());
 
+  // Ресайз изображения до макс 1280×720 через canvas
+  function resizeImage(dataUrl, maxW, maxH, cb) {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW || h > maxH) {
+        const ratio = Math.min(maxW / w, maxH / h);
+        w = Math.round(w * ratio); h = Math.round(h * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', 0.88));
+    };
+    img.src = dataUrl;
+  }
+
+  // Показать превью над полем ввода (с крестиком для отмены)
+  let pendingFile = null; // { type:'image'|'doc', src, name, size }
+
+  function showFilePreview(data) {
+    pendingFile = data;
+    let existing = document.getElementById('file-preview-bar');
+    if (!existing) {
+      existing = document.createElement('div');
+      existing.id = 'file-preview-bar';
+      existing.style.cssText = 'position:relative;background:#f3f4f6;border-top:1px solid #e5e7eb;padding:8px 12px;display:flex;align-items:center;gap:10px;';
+      const inputRow = document.querySelector('.chat-input-row');
+      inputRow.parentNode.insertBefore(existing, inputRow);
+    }
+    if (data.type === 'image') {
+      existing.innerHTML = `
+        <img src="${data.src}" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+        <div style="font-size:12px;color:#374151;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${data.name}</div>
+        <button onclick="cancelFilePreview()" style="width:24px;height:24px;border-radius:50%;background:#6b7280;border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+      `;
+    } else {
+      existing.innerHTML = `
+        <span style="font-size:26px;flex-shrink:0;">📄</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${data.name}</div>
+          <div style="font-size:11px;color:#9ca3af;">${data.size}</div>
+        </div>
+        <button onclick="cancelFilePreview()" style="width:24px;height:24px;border-radius:50%;background:#6b7280;border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
+      `;
+    }
+  }
+
+  function cancelFilePreview() {
+    pendingFile = null;
+    const bar = document.getElementById('file-preview-bar');
+    if (bar) bar.remove();
+  }
+
+  function sendPendingFile() {
+    if (!pendingFile) return;
+    const data = pendingFile;
+    cancelFilePreview();
+    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    if (data.type === 'image') {
+      div.innerHTML = `<img src="${data.src}" style="max-width:200px;border-radius:10px;display:block;">`;
+    } else {
+      div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;"><span style="font-size:18px;">📄</span><div><div style="font-size:13px;font-weight:600;">${data.name}</div><div style="font-size:11px;opacity:0.75;">${data.size}</div></div></div>`;
+    }
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    if (window._chatReqId) {
+      const bc = new BroadcastChannel('visaslot_chat');
+      bc.postMessage({ type: 'client_file', fileType: data.type, src: data.src, name: data.name, size: data.size, time, reqId: window._chatReqId, clientName: window._chatClientName });
+      bc.close();
+    }
+  }
+
+  // Перехватываем кнопку отправки — если есть pendingFile, отправляем файл
+  const origSendBtn = document.getElementById('chat-send');
+  origSendBtn.addEventListener('click', () => { if (pendingFile) sendPendingFile(); }, true);
+  document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter' && pendingFile) { sendPendingFile(); e.stopImmediatePropagation(); } }, true);
+
   attachFileInput.addEventListener('change', () => {
     const file = attachFileInput.files[0];
     if (!file) return;
     attachFileInput.value = '';
     const isImg = file.type.startsWith('image/');
-    const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
     if (isImg) {
       const reader = new FileReader();
       reader.onload = e => {
-        const div = document.createElement('div');
-        div.className = 'chat-msg user';
-        div.innerHTML = `<img src="${e.target.result}" style="max-width:200px;border-radius:10px;display:block;"><span class="chat-msg-time">${time}</span>`;
-        document.getElementById('chat-body').appendChild(div);
-        document.getElementById('chat-body').scrollTop = 99999;
-        if (window._chatReqId) {
-          const bc = new BroadcastChannel('visaslot_chat');
-          bc.postMessage({ type: 'client_file', fileType: 'image', src: e.target.result, name: file.name, time, reqId: window._chatReqId, clientName: window._chatClientName });
-          bc.close();
-        }
+        resizeImage(e.target.result, 1280, 720, resized => {
+          showFilePreview({ type: 'image', src: resized, name: file.name });
+        });
       };
       reader.readAsDataURL(file);
     } else {
       const sizeKb = Math.round(file.size / 1024) + ' КБ';
-      const div = document.createElement('div');
-      div.className = 'chat-msg user';
-      div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 10px;"><span style="font-size:18px;">📄</span><div><div style="font-size:13px;font-weight:600;">${file.name}</div><div style="font-size:11px;opacity:0.75;">${sizeKb}</div></div></div><span class="chat-msg-time">${time}</span>`;
-      document.getElementById('chat-body').appendChild(div);
-      document.getElementById('chat-body').scrollTop = 99999;
-      if (window._chatReqId) {
-        const bc = new BroadcastChannel('visaslot_chat');
-        bc.postMessage({ type: 'client_file', fileType: 'doc', name: file.name, size: sizeKb, time, reqId: window._chatReqId, clientName: window._chatClientName });
-        bc.close();
-      }
+      showFilePreview({ type: 'doc', name: file.name, size: sizeKb });
     }
   });
   // chat mic
