@@ -480,11 +480,27 @@
   });
 
   // Filter buttons
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  function applyFilter(filter) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.filter-btn[data-filter="${filter}"]`).classList.add('active');
+    document.querySelectorAll('.app-table tbody tr').forEach(tr => {
+      const badge = tr.querySelector('.badge');
+      if (!badge) { tr.style.display = ''; return; }
+      const cls = badge.className;
+      if (filter === 'all') {
+        tr.style.display = '';
+      } else if (filter === 'new') {
+        tr.style.display = cls.includes('badge-new') ? '' : 'none';
+      } else if (filter === 'active') {
+        tr.style.display = cls.includes('badge-active') ? '' : 'none';
+      } else if (filter === 'done') {
+        tr.style.display = cls.includes('badge-done') ? '' : 'none';
+      }
     });
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
   });
 
   // Logout
