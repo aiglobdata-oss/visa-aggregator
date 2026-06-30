@@ -1566,7 +1566,8 @@
 </script>
 
   <!-- Модал: Создать заявку (вне секций — position:fixed работает корректно) -->
-  <div class="create-modal-overlay" id="create-modal-overlay" onclick="if(event.target===this)closeCreateModal()">
+  <!-- закрытие только через крестик, клик на оверлей не закрывает -->
+  <div class="create-modal-overlay" id="create-modal-overlay">
     <div class="create-modal" style="max-width:560px;max-height:90vh;overflow-y:auto;overflow-x:hidden;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <h3 style="font-size:18px;font-weight:800;margin:0;">Новая заявка</h3>
@@ -1579,13 +1580,56 @@
         <div><label>Фамилия *</label><input id="cm-last" placeholder="Иванов" autocomplete="off" autocapitalize="words"></div>
       </div>
       <div class="form-row">
-        <div><label>Телефон *</label><input id="cm-phone" placeholder="+7 (___) ___-__-__" autocomplete="off" inputmode="tel"></div>
+        <div>
+          <label>Телефон *</label>
+          <div style="display:flex;align-items:center;border:1.5px solid #e5e7eb;border-radius:10px;overflow:hidden;background:#fff;" id="cm-phone-wrap">
+            <span style="padding:0 10px 0 12px;font-size:14px;color:#374151;white-space:nowrap;user-select:none;">+7</span>
+            <input id="cm-phone" placeholder="(999) 123-45-67" autocomplete="off" inputmode="tel"
+              style="border:none;outline:none;padding:10px 12px 10px 0;font-size:14px;width:100%;font-family:inherit;"
+              oninput="this.value=this.value.replace(/[^0-9\s\-\(\)]/g,'')">
+          </div>
+        </div>
         <div><label>Источник</label><select id="cm-source"><option>С улицы / офис</option><option>Рекомендация</option><option>Соцсети</option><option>Сайт</option><option>Другое</option></select></div>
       </div>
 
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#9ca3af;margin:16px 0 10px;">Виза</div>
       <div class="form-row">
-        <div><label>Страна</label><select id="cm-country"><option value="">— выбрать —</option><option>🇫🇷 Франция</option><option>🇮🇹 Италия</option><option>🇪🇸 Испания</option><option>🇧🇬 Болгария</option><option>🇩🇪 Германия</option><option>🇳🇱 Нидерланды</option><option>🇨🇿 Чехия</option><option>🇬🇷 Греция</option><option>🇦🇹 Австрия</option><option>Другая</option></select></div>
+        <div><label>Страна</label><select id="cm-country">
+          <option value="">— выбрать —</option>
+          <option>🇦🇹 Австрия</option>
+          <option>🇦🇺 Австралия</option>
+          <option>🇧🇪 Бельгия</option>
+          <option>🇧🇬 Болгария</option>
+          <option>🇬🇧 Великобритания</option>
+          <option>🇭🇺 Венгрия</option>
+          <option>🇩🇪 Германия</option>
+          <option>🇬🇷 Греция</option>
+          <option>🇮🇸 Исландия</option>
+          <option>🇪🇸 Испания</option>
+          <option>🇮🇹 Италия</option>
+          <option>🇨🇦 Канада</option>
+          <option>🇨🇳 Китай</option>
+          <option>🇱🇻 Латвия</option>
+          <option>🇱🇹 Литва</option>
+          <option>🇱🇮 Лихтенштейн</option>
+          <option>🇲🇹 Мальта</option>
+          <option>🇳🇱 Нидерланды</option>
+          <option>🇳🇿 Новая Зеландия</option>
+          <option>🇳🇴 Норвегия</option>
+          <option>🇵🇱 Польша</option>
+          <option>🇵🇹 Португалия</option>
+          <option>🇷🇴 Румыния</option>
+          <option>🇸🇰 Словакия</option>
+          <option>🇸🇮 Словения</option>
+          <option>🇺🇸 США</option>
+          <option>🇫🇮 Финляндия</option>
+          <option>🇫🇷 Франция</option>
+          <option>🇨🇿 Чехия</option>
+          <option>🇨🇭 Швейцария</option>
+          <option>🇪🇪 Эстония</option>
+          <option>🇯🇵 Япония</option>
+          <option>Другая</option>
+        </select></div>
         <div><label>Тип визы</label><select id="cm-visa"><option value="">— выбрать —</option><option>Шенген, туризм</option><option>Шенген, бизнес</option><option>Шенген, учёба</option><option>Шенген, лечение</option><option>Национальная виза</option><option>Транзитная</option></select></div>
       </div>
       <div class="form-row">
