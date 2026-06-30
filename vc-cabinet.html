@@ -972,20 +972,21 @@
   // ── СТАТУСЫ ЗАЯВОК ──
   const APP_STATUSES = [
     { key: 'new',         label: 'Новая',             bg: '#4f46e5', color: '#fff', filter: 'new'    },
-    { key: 'irrelevant',  label: 'Не актуально',      bg: '#64748b', color: '#fff', filter: 'done'   },
-    { key: 'trip6',       label: 'Поездка 6+ мес',    bg: '#64748b', color: '#fff', filter: 'new'    },
-    { key: 'callback',    label: 'Перезвонить',        bg: '#64748b', color: '#fff', filter: 'new'    },
-    { key: 'processing',  label: 'В обработке',        bg: '#64748b', color: '#fff', filter: 'active' },
-    { key: 'waiting',     label: 'Ожидает',            bg: '#64748b', color: '#fff', filter: 'new'    },
-    { key: 'sent_kp',     label: 'Отправлено КП',      bg: '#64748b', color: '#fff', filter: 'active' },
-    { key: 'contract',    label: 'Заключён договор',   bg: '#64748b', color: '#fff', filter: 'active' },
+    { key: 'irrelevant',  label: 'Не актуально',      bg: '#f87171', color: '#fff', filter: 'done'   },
+    { key: 'trip6',       label: 'Поездка 6+ мес',    bg: '#38bdf8', color: '#fff', filter: 'new'    },
+    { key: 'callback',    label: 'Перезвонить',        bg: '#9a3412', color: '#fff', filter: 'new'    },
+    { key: 'processing',  label: 'В обработке',        bg: '#a3e635', color: '#000', filter: 'active' },
+    { key: 'waiting',     label: 'Ожидает',            bg: '#ffffff', color: '#000', border: '#d1d5db', filter: 'new'    },
+    { key: 'sent_kp',     label: 'Отправлено КП',      bg: '#2563eb', color: '#fff', filter: 'active' },
+    { key: 'contract',    label: 'Заключён договор',   bg: '#1d8348', color: '#fff', filter: 'active' },
     { key: 'paid',        label: 'Оплачено',           bg: '#166534', color: '#fff', filter: 'active' },
     { key: 'visa_done',   label: 'Получена виза',      bg: '#064e3b', color: '#fff', filter: 'done'   },
   ];
   function appStatByKey(key) { return APP_STATUSES.find(s => s.key === key) || APP_STATUSES[0]; }
   function appStatPillHTML(key) {
     const s = appStatByKey(key);
-    return `<span class="app-stat-pill" data-key="${s.key}" onclick="openAppStatusDrop(event,this)" style="display:inline-flex;align-items:center;gap:5px;background:${s.bg};color:${s.color};border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;user-select:none;">${s.label}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>`;
+    const borderStyle = s.border ? `border:1.5px solid ${s.border};` : 'border:none;';
+    return `<span class="app-stat-pill" data-key="${s.key}" onclick="openAppStatusDrop(event,this)" style="display:inline-flex;align-items:center;gap:5px;background:${s.bg};color:${s.color};${borderStyle}border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;user-select:none;">${s.label}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></span>`;
   }
 
   // ── ПЛАТЕЖИ ──
@@ -1077,7 +1078,7 @@
     APP_STATUSES.forEach(s => {
       const el = document.createElement('div');
       el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;';
-      el.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${s.bg};flex-shrink:0;"></span>${s.label}`;
+      el.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${s.bg};${s.border?`border:1px solid ${s.border};`:''}flex-shrink:0;"></span>${s.label}`;
       el.onmouseenter = () => el.style.background = '#f3f4f6';
       el.onmouseleave = () => el.style.background = '';
       el.onclick = (ev) => { ev.stopPropagation(); setAppStatus(s.key); closeAppDrop(); };
