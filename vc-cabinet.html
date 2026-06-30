@@ -1888,7 +1888,8 @@
     const clients = [];
     document.querySelectorAll('.app-table tbody tr').forEach(tr => {
       const s = tr.dataset.status;
-      if ((s === 'new' || s === 'active') && tr.dataset.name) {
+      const rowFilter = (APP_STATUSES.find(x => x.key === s) || {}).filter || s;
+      if ((rowFilter === 'new' || rowFilter === 'active') && tr.dataset.name) {
         clients.push({
           name:    tr.dataset.name,
           phone:   tr.dataset.phone   || '',
