@@ -224,7 +224,7 @@
   <a href="landing.html" class="cab-logo">VisaSlot</a>
   <div class="cab-center-name">Центр Путешествий №1 · Москва</div>
   <div class="cab-stats-pill">⚡ 3 новые заявки</div>
-  <div class="cab-avatar">ЦП</div>
+  <div class="cab-avatar" id="cab-avatar-hdr">ЦП</div>
 </header>
 
 <div class="cab-layout">
@@ -1393,7 +1393,7 @@
     if (removeBtn) removeBtn.style.display = '';
     if (wrap) wrap.style.border = '2px solid var(--line)';
     // Аватар в хедере — заменяем инициалы на лого
-    const hdrAva = document.querySelector('.cab-avatar');
+    const hdrAva = document.getElementById('cab-avatar-hdr');
     if (hdrAva) {
       hdrAva.textContent = '';
       hdrAva.style.backgroundImage = `url(${src})`;
@@ -1404,8 +1404,7 @@
 
   function removeVcLogo() {
     localStorage.removeItem('vs_vc_logo');
-    // Восстановить инициалы в хедере
-    const hdrAva = document.querySelector('.cab-avatar');
+    const hdrAva = document.getElementById('cab-avatar-hdr');
     if (hdrAva) { hdrAva.style.backgroundImage = ''; hdrAva.textContent = 'ЦП'; }
     const img = document.getElementById('vc-logo-img');
     const placeholder = document.getElementById('vc-logo-placeholder');
@@ -1630,6 +1629,18 @@
     @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
   `;
   document.head.appendChild(style);
+
+  // Восстановить лого в хедере — вызываем последним после всего DOM
+  (function() {
+    const logo = localStorage.getItem('vs_vc_logo');
+    if (!logo) return;
+    const hdr = document.getElementById('cab-avatar-hdr');
+    if (!hdr) return;
+    hdr.textContent = '';
+    hdr.style.backgroundImage = `url(${logo})`;
+    hdr.style.backgroundSize = 'cover';
+    hdr.style.backgroundPosition = 'center';
+  })();
 </script>
 
   <!-- Модал: Создать заявку (вне секций — position:fixed работает корректно) -->
