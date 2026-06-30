@@ -409,7 +409,7 @@
     <!-- ── СТАТИСТИКА ── -->
     <div class="section" id="section-stats">
       <div class="section-title" style="margin-bottom:8px;">Статистика по клиентам</div>
-      <div class="section-sub" style="margin-bottom:24px;">Июнь 2026</div>
+      <div class="section-sub" id="stats-period-sub" style="margin-bottom:24px;">Июнь 2026</div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Всего заявок</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub" style="color:var(--muted);">в базе</div></div>
         <div class="stat-card"><div class="stat-label">В работе</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub" style="color:var(--muted);">активных</div></div>
@@ -425,7 +425,6 @@
             </button>
           </div>
           <div class="stat-value" id="stat-income" style="margin-top:6px;">—</div>
-          <div class="stat-sub" style="color:var(--muted);" id="income-period-sub">за текущий месяц</div>
           <!-- дропдаун -->
           <div id="income-drop" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.13);padding:6px;min-width:180px;z-index:99;">
             <div id="income-months-list"></div>
@@ -440,9 +439,10 @@
         <div class="stat-card" style="border-color:#fee2e2;background:#fff5f5;"><div class="stat-label" style="color:#dc2626;">Удалённые заявки</div><div class="stat-value" id="stat-deleted" style="color:#dc2626;">0</div><div class="stat-sub" style="color:#f87171;">за сессию</div></div>
       </div>
 
-      <!-- Статистика по менеджерам -->
-      <div style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:20px;">
-        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Статистика по менеджерам</div>
+      <!-- Статистика по менеджерам — заголовок вне рамки -->
+      <div class="section-title" style="margin:32px 0 8px;font-size:20px;">Статистика по менеджерам</div>
+      <div class="section-sub" style="margin-bottom:16px;">Данные по заявкам и платежам</div>
+      <div style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;">
         <div id="mgr-stats-table"></div>
       </div>
     </div>
@@ -2030,12 +2030,26 @@
   function selectIncomePeriod(key, label) {
     _incomePeriod = key;
     const btn = document.getElementById('income-period-label');
-    const sub = document.getElementById('income-period-sub');
     if (btn) btn.textContent = label;
-    if (sub) sub.textContent = label;
     const inc = calcIncome(key);
     const el = document.getElementById('stat-income');
     if (el) el.textContent = inc ? inc.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
+    // Обновляем подзаголовок раздела
+    const periodSub = document.getElementById('stats-period-sub');
+    if (periodSub) {
+      if (key === 'year') {
+        periodSub.textContent = 'За ' + new Date().getFullYear();
+      } else if (key === 'current') {
+        const RU_M = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        const now = new Date();
+        periodSub.textContent = RU_M[now.getMonth()] + ' ' + now.getFullYear();
+      } else {
+        // YYYY-MM → «Июнь 2026»
+        const RU_M = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        const [yr, mo] = key.split('-');
+        periodSub.textContent = RU_M[parseInt(mo)-1] + ' ' + yr;
+      }
+    }
     document.getElementById('income-drop').style.display = 'none';
   }
 
