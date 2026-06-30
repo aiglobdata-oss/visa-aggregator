@@ -296,6 +296,14 @@
         <button class="filter-btn" data-filter="new" id="fb-new">Новые (3)</button>
         <button class="filter-btn" data-filter="active" id="fb-active">В работе (2)</button>
         <button class="filter-btn" data-filter="done" id="fb-done">Завершены (1)</button>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <select id="filter-manager" onchange="applyTableFilters()" style="border:1.5px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);cursor:pointer;outline:none;">
+            <option value="">Все менеджеры</option>
+          </select>
+          <select id="filter-country" onchange="applyTableFilters()" style="border:1.5px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);cursor:pointer;outline:none;">
+            <option value="">Все страны</option>
+          </select>
+        </div>
       </div>
 
       <table class="app-table">
@@ -400,25 +408,42 @@
 
     <!-- ── СТАТИСТИКА ── -->
     <div class="section" id="section-stats">
-      <div class="section-title" style="margin-bottom:8px;">Статистика</div>
+      <div class="section-title" style="margin-bottom:8px;">Статистика по клиентам</div>
       <div class="section-sub" style="margin-bottom:24px;">Июнь 2026</div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Всего заявок</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub" style="color:var(--muted);">в базе</div></div>
         <div class="stat-card"><div class="stat-label">В работе</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub" style="color:var(--muted);">активных</div></div>
         <div class="stat-card"><div class="stat-label">Завершено</div><div class="stat-value" id="stat-done">—</div><div class="stat-sub" style="color:var(--muted);">закрытых</div></div>
-        <div class="stat-card"><div class="stat-label">Доход (платежи)</div><div class="stat-value" id="stat-income">—</div><div class="stat-sub" style="color:var(--muted);">из раздела Платежи</div></div>
+
+        <!-- Доход с выпадашкой по месяцам -->
+        <div class="stat-card" style="position:relative;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="stat-label">Доход</div>
+            <button id="income-period-btn" onclick="toggleIncomeDrop(event)" style="display:inline-flex;align-items:center;gap:4px;background:#eef2ff;color:var(--indigo);border:none;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">
+              <span id="income-period-label">за текущий месяц</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="stat-value" id="stat-income" style="margin-top:6px;">—</div>
+          <div class="stat-sub" style="color:var(--muted);" id="income-period-sub">за текущий месяц</div>
+          <!-- дропдаун -->
+          <div id="income-drop" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.13);padding:6px;min-width:180px;z-index:99;">
+            <div id="income-months-list"></div>
+            <div style="border-top:1px solid var(--line);margin:4px 0;"></div>
+            <div class="income-opt" onclick="selectIncomePeriod('year','За год')" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;color:var(--indigo);">
+              📊 За год
+            </div>
+          </div>
+        </div>
+
         <div class="stat-card"><div class="stat-label">Клиентов</div><div class="stat-value" id="stat-clients">—</div><div class="stat-sub" style="color:var(--muted);">уникальных</div></div>
         <div class="stat-card" style="border-color:#fee2e2;background:#fff5f5;"><div class="stat-label" style="color:#dc2626;">Удалённые заявки</div><div class="stat-value" id="stat-deleted" style="color:#dc2626;">0</div><div class="stat-sub" style="color:#f87171;">за сессию</div></div>
       </div>
-      <div style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;">
-        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Заявки по странам</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;">🇮🇹</span><span style="width:80px;font-size:14px;">Италия</span><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:33%;height:100%;background:var(--indigo);border-radius:4px;"></div></div><span style="font-size:13px;font-weight:600;margin-left:8px;">4</span></div>
-          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;">🇫🇷</span><span style="width:80px;font-size:14px;">Франция</span><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:var(--indigo);border-radius:4px;"></div></div><span style="font-size:13px;font-weight:600;margin-left:8px;">3</span></div>
-          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;">🇪🇸</span><span style="width:80px;font-size:14px;">Испания</span><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:17%;height:100%;background:var(--indigo);border-radius:4px;"></div></div><span style="font-size:13px;font-weight:600;margin-left:8px;">2</span></div>
-          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;">🇩🇪</span><span style="width:80px;font-size:14px;">Германия</span><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:17%;height:100%;background:var(--indigo);border-radius:4px;"></div></div><span style="font-size:13px;font-weight:600;margin-left:8px;">2</span></div>
-          <div style="display:flex;align-items:center;gap:12px;"><span style="width:20px;">🇳🇱</span><span style="width:80px;font-size:14px;">Другие</span><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:8%;height:100%;background:var(--indigo);border-radius:4px;"></div></div><span style="font-size:13px;font-weight:600;margin-left:8px;">1</span></div>
-        </div>
+
+      <!-- Статистика по менеджерам -->
+      <div style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:20px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Статистика по менеджерам</div>
+        <div id="mgr-stats-table"></div>
       </div>
     </div>
 
@@ -579,10 +604,7 @@
   function applyFilter(filter) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.filter-btn[data-filter="${filter}"]`).classList.add('active');
-    document.querySelectorAll('.app-table tbody tr').forEach(tr => {
-      const s = tr.dataset.status || 'new';
-      tr.style.display = (filter === 'all' || filter === s) ? '' : 'none';
-    });
+    applyTableFilters();
   }
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1929,18 +1951,105 @@
   }
 
   // ── СТАТИСТИКА: рендер из заявок + платежей ──
+  let _incomePeriod = 'current'; // 'current' | 'year' | 'YYYY-MM'
+
+  function calcIncome(period) {
+    let total = 0;
+    payments.forEach(p => {
+      if (p.type !== 'in') return;
+      const amt = parseInt((p.amount || '').replace(/\D/g,''));
+      if (isNaN(amt)) return;
+      if (period === 'year') { total += amt; return; }
+      // текущий месяц = current
+      const now = new Date();
+      const curKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      const key = period === 'current' ? curKey : period;
+      // парсим дату платежа
+      const RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      const parts = p.date.split(' ');
+      if (parts.length >= 3) {
+        const mi = RU_MONTHS.indexOf(parts[1]);
+        if (mi >= 0) {
+          const yr  = parseInt(parts[2]);
+          const pKey = yr + '-' + String(mi+1).padStart(2,'0');
+          if (pKey === key) total += amt;
+        }
+      }
+    });
+    return total;
+  }
+
+  function buildIncomeMonths() {
+    const list = document.getElementById('income-months-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const RU_MONTHS_NOM = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    const seen = new Set();
+    payments.filter(p => p.type === 'in').forEach(p => {
+      const RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      const parts = p.date.split(' ');
+      if (parts.length >= 3) {
+        const mi = RU_MONTHS.indexOf(parts[1]);
+        if (mi >= 0) { seen.add(parseInt(parts[2]) + '-' + String(mi+1).padStart(2,'0')); }
+      }
+    });
+    [...seen].sort().forEach(key => {
+      const [yr, mo] = key.split('-');
+      const label = RU_MONTHS_NOM[parseInt(mo)-1] + ' ' + yr;
+      const el = document.createElement('div');
+      el.className = 'income-opt';
+      el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;';
+      el.textContent = label;
+      el.onmouseenter = () => el.style.background='#f3f4f6';
+      el.onmouseleave = () => el.style.background='';
+      el.onclick = () => selectIncomePeriod(key, label);
+      list.appendChild(el);
+    });
+    // Добавить «За текущий месяц» если не в списке
+    const now = new Date();
+    const curKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    if (!seen.has(curKey)) {
+      const el = document.createElement('div');
+      el.className = 'income-opt';
+      el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;';
+      el.textContent = 'Текущий месяц';
+      el.onmouseenter = () => el.style.background='#f3f4f6';
+      el.onmouseleave = () => el.style.background='';
+      el.onclick = () => selectIncomePeriod('current','за текущий месяц');
+      list.prepend(el);
+    }
+  }
+
+  function toggleIncomeDrop(e) {
+    e.stopPropagation();
+    buildIncomeMonths();
+    const drop = document.getElementById('income-drop');
+    drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function selectIncomePeriod(key, label) {
+    _incomePeriod = key;
+    const btn = document.getElementById('income-period-label');
+    const sub = document.getElementById('income-period-sub');
+    if (btn) btn.textContent = label;
+    if (sub) sub.textContent = label;
+    const inc = calcIncome(key);
+    const el = document.getElementById('stat-income');
+    if (el) el.textContent = inc ? inc.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
+    document.getElementById('income-drop').style.display = 'none';
+  }
+
+  document.addEventListener('click', () => {
+    const d = document.getElementById('income-drop');
+    if (d) d.style.display = 'none';
+  });
+
   function renderStats() {
     const rows   = [...document.querySelectorAll('.app-table tbody tr')];
     const total  = rows.length;
     const active = rows.filter(r => r.dataset.status === 'active').length;
     const done   = rows.filter(r => r.dataset.status === 'done').length;
-    let income = 0;
-    document.querySelectorAll('#payments-tbody tr').forEach(tr => {
-      if (tr.cells[3]) {
-        const n = parseInt((tr.cells[3].textContent || '').replace(/\D/g,''));
-        if (!isNaN(n)) income += n;
-      }
-    });
+    const income = calcIncome(_incomePeriod);
     const el = id => document.getElementById(id);
     if (el('stat-total'))   el('stat-total').textContent   = total;
     if (el('stat-active'))  el('stat-active').textContent  = active;
@@ -1948,6 +2057,127 @@
     if (el('stat-income'))  el('stat-income').textContent  = income ? income.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
     if (el('stat-clients')) el('stat-clients').textContent = total;
     if (el('stat-deleted')) el('stat-deleted').textContent = _deletedCount;
+    renderMgrStats();
+  }
+
+  // ── СТАТИСТИКА ПО МЕНЕДЖЕРАМ ──
+  function renderMgrStats() {
+    const tbl = document.getElementById('mgr-stats-table');
+    if (!tbl) return;
+    if (!managers.length) {
+      tbl.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:12px 0;">Менеджеры не добавлены</div>';
+      return;
+    }
+    const now = new Date();
+    const curMo = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+    const rows = [...document.querySelectorAll('.app-table tbody tr')];
+
+    const stats = managers.map(mgr => {
+      const mgrRows = rows.filter(tr => {
+        const specSel = tr.querySelector('.spec-select');
+        const specTxt = tr.querySelector('td:nth-child(6) span');
+        const val = specSel ? specSel.value : (specTxt ? specTxt.textContent.trim() : '');
+        return val === mgr.name;
+      });
+      const total   = mgrRows.length;
+      const success = mgrRows.filter(r => r.dataset.status === 'done').length;
+      const visas   = mgrRows.filter(r => {
+        const pill = r.querySelector('.app-stat-pill');
+        return pill && pill.dataset.key === 'visa_done';
+      }).length;
+
+      // Доход менеджера из платежей
+      let incMo = 0, incYr = 0;
+      payments.filter(p => p.type === 'in' && p.manager === mgr.name).forEach(p => {
+        const amt = parseInt((p.amount || '').replace(/\D/g,''));
+        if (isNaN(amt)) return;
+        incYr += amt;
+        const parts = p.date.split(' ');
+        if (parts.length >= 3) {
+          const mi = RU_MONTHS.indexOf(parts[1]);
+          if (mi >= 0) {
+            const key = parseInt(parts[2]) + '-' + String(mi+1).padStart(2,'0');
+            if (key === curMo) incMo += amt;
+          }
+        }
+      });
+      return { name: mgr.name, total, success, visas, incMo, incYr };
+    });
+
+    tbl.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--line);">
+              <th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Менеджер</th>
+              <th style="text-align:center;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Заявок</th>
+              <th style="text-align:center;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Успешных</th>
+              <th style="text-align:center;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Виз получено</th>
+              <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Доход (месяц)</th>
+              <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Доход (год)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${stats.map(s => `
+              <tr style="border-bottom:1px solid var(--line);">
+                <td style="padding:12px;font-weight:600;">${s.name}</td>
+                <td style="text-align:center;padding:12px;">${s.total}</td>
+                <td style="text-align:center;padding:12px;"><span style="background:#dcfce7;color:#15803d;border-radius:20px;padding:2px 10px;font-weight:600;">${s.success}</span></td>
+                <td style="text-align:center;padding:12px;"><span style="background:#ede9fe;color:#6d28d9;border-radius:20px;padding:2px 10px;font-weight:600;">${s.visas}</span></td>
+                <td style="text-align:right;padding:12px;font-weight:600;color:var(--indigo);">${s.incMo ? s.incMo.toLocaleString('ru-RU') + ' ₽' : '—'}</td>
+                <td style="text-align:right;padding:12px;font-weight:700;">${s.incYr ? s.incYr.toLocaleString('ru-RU') + ' ₽' : '—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── ФИЛЬТРЫ В ЗАЯВКАХ: по менеджеру и стране ──
+  function populateFilterSelects() {
+    const mgrSel  = document.getElementById('filter-manager');
+    const cntrSel = document.getElementById('filter-country');
+    if (!mgrSel || !cntrSel) return;
+    const curMgr  = mgrSel.value;
+    const curCntr = cntrSel.value;
+    // Менеджеры
+    mgrSel.innerHTML = '<option value="">Все менеджеры</option>';
+    managers.forEach(m => {
+      const o = document.createElement('option');
+      o.value = m.name; o.textContent = m.name;
+      if (m.name === curMgr) o.selected = true;
+      mgrSel.appendChild(o);
+    });
+    // Страны из таблицы
+    const countries = new Set();
+    document.querySelectorAll('.app-table tbody tr').forEach(tr => {
+      const c = tr.cells[1] ? tr.cells[1].textContent.trim() : '';
+      if (c && c !== '—') countries.add(c);
+    });
+    cntrSel.innerHTML = '<option value="">Все страны</option>';
+    [...countries].sort().forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      if (c === curCntr) o.selected = true;
+      cntrSel.appendChild(o);
+    });
+  }
+
+  function applyTableFilters() {
+    const mgrVal  = (document.getElementById('filter-manager')  || {}).value || '';
+    const cntrVal = (document.getElementById('filter-country')  || {}).value || '';
+    const activeFilter = (document.querySelector('.filter-btn.active') || {}).dataset?.filter || 'all';
+    document.querySelectorAll('.app-table tbody tr').forEach(tr => {
+      const specSel = tr.querySelector('.spec-select');
+      const specTxt = tr.querySelector('td:nth-child(6) span');
+      const mgr = specSel ? specSel.value : (specTxt ? specTxt.textContent.trim() : '');
+      const cntr = tr.cells[1] ? tr.cells[1].textContent.trim() : '';
+      const matchMgr  = !mgrVal  || mgr.includes(mgrVal);
+      const matchCntr = !cntrVal || cntr.includes(cntrVal);
+      const matchStatus = activeFilter === 'all' || tr.dataset.status === activeFilter;
+      tr.style.display = (matchMgr && matchCntr && matchStatus) ? '' : 'none';
+    });
   }
 
   // ── НАСТРОЙКИ: сохранить ──
@@ -1997,6 +2227,7 @@
   // Первичный рендер
   renderClients();
   renderStats();
+  populateFilterSelects();
 
   // Инициализация статусных пилюль в статичных строках
   [
