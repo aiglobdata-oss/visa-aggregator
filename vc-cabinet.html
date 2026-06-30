@@ -971,17 +971,16 @@
 
   // ── СТАТУСЫ ЗАЯВОК ──
   const APP_STATUSES = [
-    { key: 'new',         label: 'Новая',             bg: '#4f46e5', color: '#fff',    filter: 'new'    },
-    { key: 'irrelevant',  label: 'Не актуально',      bg: '#fee2e2', color: '#b91c1c', filter: 'done'   },
-    { key: 'trip6',       label: 'Поездка 6+ мес',    bg: '#dbeafe', color: '#1d4ed8', filter: 'new'    },
-    { key: 'trip3',       label: 'Поездка 3+ мес',    bg: '#bfdbfe', color: '#1e40af', filter: 'new'    },
-    { key: 'callback',    label: 'Перезвонить',        bg: '#ffedd5', color: '#c2410c', filter: 'new'    },
-    { key: 'processing',  label: 'В обработке',        bg: '#dcfce7', color: '#15803d', filter: 'active' },
-    { key: 'waiting',     label: 'Ожидает',            bg: '#fef9c3', color: '#a16207', filter: 'new'    },
-    { key: 'sent_kp',     label: 'Отправлено КП',      bg: '#dbeafe', color: '#1e40af', filter: 'active' },
-    { key: 'contract',    label: 'Заключён договор',   bg: '#ede9fe', color: '#6d28d9', filter: 'active' },
-    { key: 'paid',        label: 'Оплачено',           bg: '#166534', color: '#fff',    filter: 'active' },
-    { key: 'visa_done',   label: 'Получена виза',      bg: '#064e3b', color: '#fff',    filter: 'done'   },
+    { key: 'new',         label: 'Новая',             bg: '#4f46e5', color: '#fff', filter: 'new'    },
+    { key: 'irrelevant',  label: 'Не актуально',      bg: '#64748b', color: '#fff', filter: 'done'   },
+    { key: 'trip6',       label: 'Поездка 6+ мес',    bg: '#64748b', color: '#fff', filter: 'new'    },
+    { key: 'callback',    label: 'Перезвонить',        bg: '#64748b', color: '#fff', filter: 'new'    },
+    { key: 'processing',  label: 'В обработке',        bg: '#64748b', color: '#fff', filter: 'active' },
+    { key: 'waiting',     label: 'Ожидает',            bg: '#64748b', color: '#fff', filter: 'new'    },
+    { key: 'sent_kp',     label: 'Отправлено КП',      bg: '#64748b', color: '#fff', filter: 'active' },
+    { key: 'contract',    label: 'Заключён договор',   bg: '#64748b', color: '#fff', filter: 'active' },
+    { key: 'paid',        label: 'Оплачено',           bg: '#166534', color: '#fff', filter: 'active' },
+    { key: 'visa_done',   label: 'Получена виза',      bg: '#064e3b', color: '#fff', filter: 'done'   },
   ];
   function appStatByKey(key) { return APP_STATUSES.find(s => s.key === key) || APP_STATUSES[0]; }
   function appStatPillHTML(key) {
@@ -1078,7 +1077,7 @@
     APP_STATUSES.forEach(s => {
       const el = document.createElement('div');
       el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;';
-      el.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${s.color};flex-shrink:0;"></span>${s.label}`;
+      el.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${s.bg};flex-shrink:0;"></span>${s.label}`;
       el.onmouseenter = () => el.style.background = '#f3f4f6';
       el.onmouseleave = () => el.style.background = '';
       el.onclick = (ev) => { ev.stopPropagation(); setAppStatus(s.key); closeAppDrop(); };
