@@ -372,7 +372,7 @@
           <div class="section-title">Слоты</div>
           <div class="section-sub">Управление записями в консульства</div>
         </div>
-        <button class="btn-main">+ Добавить слот</button>
+        <button class="btn-main" onclick="openAddSlot()">+ Добавить слот</button>
       </div>
       <div class="slots-grid" id="slots-grid">
         <div class="slot-card" data-slot-id="s1"><div class="slot-date">Пн, 7 июля</div><div class="slot-time">09:00</div><div class="slot-status slot-free" id="ss1">● Свободен</div><button class="btn-slot" onclick="openSlotAssign('s1','Пн, 7 июля · 09:00')">Назначить клиента</button></div>
@@ -395,14 +395,7 @@
         </div>
         <input class="form-input" style="width:240px;" placeholder="🔍 Поиск по имени или телефону">
       </div>
-      <div class="clients-list">
-        <div class="client-row"><div class="client-ava">ИИ</div><div class="client-info"><p>Иван Иванов</p><p>+7 (999) 123-45-67 · ivan@mail.ru</p></div><div class="client-apps">2 заявки</div><span class="badge badge-new" style="margin-left:12px;">Активен</span></div>
-        <div class="client-row"><div class="client-ava">АП</div><div class="client-info"><p>Анна Петрова</p><p>+7 (916) 234-56-78 · anna@yandex.ru</p></div><div class="client-apps">1 заявка</div><span class="badge badge-new" style="margin-left:12px;">Активен</span></div>
-        <div class="client-row"><div class="client-ava">СК</div><div class="client-info"><p>Сергей Козлов</p><p>+7 (903) 345-67-89</p></div><div class="client-apps">1 заявка</div><span class="badge badge-new" style="margin-left:12px;">Активен</span></div>
-        <div class="client-row"><div class="client-ava">МС</div><div class="client-info"><p>Мария Смирнова</p><p>+7 (926) 456-78-90 · masha@gmail.com</p></div><div class="client-apps">3 заявки</div><span class="badge badge-active" style="margin-left:12px;">В работе</span></div>
-        <div class="client-row"><div class="client-ava">ДВ</div><div class="client-info"><p>Дмитрий Васильев</p><p>+7 (985) 567-89-01</p></div><div class="client-apps">1 заявка</div><span class="badge badge-active" style="margin-left:12px;">В работе</span></div>
-        <div class="client-row"><div class="client-ava">ОН</div><div class="client-info"><p>Ольга Новикова</p><p>+7 (977) 678-90-12</p></div><div class="client-apps">2 заявки</div><span class="badge badge-done" style="margin-left:12px;">Завершён</span></div>
-      </div>
+      <div class="clients-list" id="clients-list"></div>
     </div>
 
     <!-- ── СТАТИСТИКА ── -->
@@ -410,12 +403,12 @@
       <div class="section-title" style="margin-bottom:8px;">Статистика</div>
       <div class="section-sub" style="margin-bottom:24px;">Июнь 2026</div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Всего заявок</div><div class="stat-value">12</div><div class="stat-sub">↑ +4 за месяц</div></div>
-        <div class="stat-card"><div class="stat-label">В работе</div><div class="stat-value">6</div><div class="stat-sub">↑ +2 за неделю</div></div>
-        <div class="stat-card"><div class="stat-label">Завершено</div><div class="stat-value">3</div><div class="stat-sub" style="color:var(--muted);">за июнь</div></div>
-        <div class="stat-card"><div class="stat-label">Доход (июнь)</div><div class="stat-value">45 000 ₽</div><div class="stat-sub">↑ +18% к маю</div></div>
-        <div class="stat-card"><div class="stat-label">Ср. время закрытия</div><div class="stat-value">8 дн.</div><div class="stat-sub" style="color:var(--muted);">от заявки до слота</div></div>
-        <div class="stat-card"><div class="stat-label">Клиентов</div><div class="stat-value">6</div><div class="stat-sub">↑ +2 новых</div></div>
+        <div class="stat-card"><div class="stat-label">Всего заявок</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub" style="color:var(--muted);">в базе</div></div>
+        <div class="stat-card"><div class="stat-label">В работе</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub" style="color:var(--muted);">активных</div></div>
+        <div class="stat-card"><div class="stat-label">Завершено</div><div class="stat-value" id="stat-done">—</div><div class="stat-sub" style="color:var(--muted);">закрытых</div></div>
+        <div class="stat-card"><div class="stat-label">Доход (платежи)</div><div class="stat-value" id="stat-income">—</div><div class="stat-sub" style="color:var(--muted);">из раздела Платежи</div></div>
+        <div class="stat-card"><div class="stat-label">Клиентов</div><div class="stat-value" id="stat-clients">—</div><div class="stat-sub" style="color:var(--muted);">уникальных</div></div>
+        <div class="stat-card" style="border-color:#fee2e2;background:#fff5f5;"><div class="stat-label" style="color:#dc2626;">Удалённые заявки</div><div class="stat-value" id="stat-deleted" style="color:#dc2626;">0</div><div class="stat-sub" style="color:#f87171;">за сессию</div></div>
       </div>
       <div style="background:var(--white);border:1px solid var(--line);border-radius:16px;padding:24px;">
         <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Заявки по странам</div>
@@ -526,11 +519,11 @@
           </div>
         </div>
 
-        <div class="form-field"><label class="form-label">Название</label><input class="form-input" value="Центр Путешествий №1"></div>
-        <div class="form-field"><label class="form-label">Адрес</label><input class="form-input" value="Москва, ул. Садовая-Кудринская, 3"></div>
-        <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" value="+7 (495) 123-45-67"></div>
-        <div class="form-field"><label class="form-label">Email</label><input class="form-input" value="info@travelcenter.ru"></div>
-        <button class="btn-save">Сохранить</button>
+        <div class="form-field"><label class="form-label">Название</label><input id="set-name" class="form-input" value="Центр Путешествий №1"></div>
+        <div class="form-field"><label class="form-label">Адрес</label><input id="set-addr" class="form-input" value="Москва, ул. Садовая-Кудринская, 3"></div>
+        <div class="form-field"><label class="form-label">Телефон</label><input id="set-phone" class="form-input" value="+7 (495) 123-45-67"></div>
+        <div class="form-field"><label class="form-label">Email</label><input id="set-email" class="form-input" value="info@travelcenter.ru"></div>
+        <button class="btn-save" onclick="saveSettings()">Сохранить</button>
       </div>
 
       <div class="settings-section">
@@ -570,6 +563,8 @@
     const target = document.getElementById('section-' + sectionId);
     if (target) target.classList.add('active');
     document.querySelectorAll('[data-section="' + sectionId + '"]').forEach(n => n.classList.add('active'));
+    if (sectionId === 'clients') renderClients();
+    if (sectionId === 'stats') renderStats();
     window.scrollTo(0, 0);
   }
 
@@ -1557,6 +1552,8 @@
 
     updateFilterCounts();
     fillSpecSelects();
+    renderClients();
+    renderStats();
     playTing();
   }
 
@@ -1800,6 +1797,23 @@
     </div>
   </nav>
 
+<!-- ── ДОБАВИТЬ СЛОТ ── -->
+<div id="add-slot-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(15,23,41,.55);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:380px;padding:32px;position:relative;">
+    <button onclick="closeAddSlot()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
+    <div style="font-size:18px;font-weight:700;margin-bottom:24px;">Добавить слот</div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Дата</label>
+      <input id="slot-new-date" type="date" style="width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:24px;">
+      <label style="font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Время</label>
+      <input id="slot-new-time" type="time" style="width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;">
+    </div>
+    <button onclick="saveSlot()" style="width:100%;padding:13px;background:var(--indigo);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Добавить</button>
+  </div>
+</div>
+
 <!-- ── ДИАЛОГ УДАЛЕНИЯ ЗАЯВКИ ── -->
 <div class="del-overlay" id="del-overlay" style="display:none;" onclick="if(event.target===this)cancelDelete()">
   <div class="del-box">
@@ -1814,6 +1828,7 @@
 
 <script>
   let _deleteTargetRow = null;
+  let _deletedCount = 0;
 
   function confirmDelete(btn) {
     _deleteTargetRow = btn.closest('tr');
@@ -1824,7 +1839,10 @@
     if (_deleteTargetRow) {
       _deleteTargetRow.remove();
       _deleteTargetRow = null;
+      _deletedCount++;
       updateFilterCounts();
+      renderClients();
+      renderStats();
     }
     document.getElementById('del-overlay').style.display = 'none';
   }
@@ -1833,6 +1851,120 @@
     _deleteTargetRow = null;
     document.getElementById('del-overlay').style.display = 'none';
   }
+
+  // ── КЛИЕНТЫ: рендер из таблицы заявок ──
+  function renderClients() {
+    const list = document.getElementById('clients-list');
+    if (!list) return;
+    const rows = document.querySelectorAll('.app-table tbody tr');
+    if (!rows.length) {
+      list.innerHTML = '<div style="text-align:center;padding:48px 0;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">👤</div><div style="font-weight:600;">Нет клиентов</div></div>';
+      return;
+    }
+    list.innerHTML = '';
+    rows.forEach(tr => {
+      const nameEl = tr.querySelector('.client-cell div[style*="font-weight:600"]');
+      const phoneEl = tr.querySelector('.client-cell div[style*="12px"]');
+      const initEl  = tr.querySelector('.client-ava');
+      if (!nameEl) return;
+      const name     = nameEl.textContent.trim();
+      const phone    = phoneEl ? phoneEl.textContent.trim() : '';
+      const initials = initEl  ? initEl.textContent.trim()  : '??';
+      const status   = tr.dataset.status;
+      const badge = status === 'done'
+        ? '<span class="badge badge-done" style="margin-left:auto;">Завершён</span>'
+        : status === 'active'
+        ? '<span class="badge badge-active" style="margin-left:auto;">В работе</span>'
+        : '<span class="badge badge-new" style="margin-left:auto;">Активен</span>';
+      list.innerHTML += `<div class="client-row"><div class="client-ava">${initials}</div><div class="client-info"><p>${name}</p><p>${phone}</p></div>${badge}</div>`;
+    });
+  }
+
+  // ── СТАТИСТИКА: рендер из заявок + платежей ──
+  function renderStats() {
+    const rows   = [...document.querySelectorAll('.app-table tbody tr')];
+    const total  = rows.length;
+    const active = rows.filter(r => r.dataset.status === 'active').length;
+    const done   = rows.filter(r => r.dataset.status === 'done').length;
+    let income = 0;
+    document.querySelectorAll('#payments-tbody tr').forEach(tr => {
+      if (tr.cells[3]) {
+        const n = parseInt((tr.cells[3].textContent || '').replace(/\D/g,''));
+        if (!isNaN(n)) income += n;
+      }
+    });
+    const el = id => document.getElementById(id);
+    if (el('stat-total'))   el('stat-total').textContent   = total;
+    if (el('stat-active'))  el('stat-active').textContent  = active;
+    if (el('stat-done'))    el('stat-done').textContent    = done;
+    if (el('stat-income'))  el('stat-income').textContent  = income ? income.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
+    if (el('stat-clients')) el('stat-clients').textContent = total;
+    if (el('stat-deleted')) el('stat-deleted').textContent = _deletedCount;
+  }
+
+  // ── НАСТРОЙКИ: сохранить ──
+  function saveSettings() {
+    const name  = (document.getElementById('set-name')  || {}).value || '';
+    const addr  = (document.getElementById('set-addr')  || {}).value || '';
+    const phone = (document.getElementById('set-phone') || {}).value || '';
+    const email = (document.getElementById('set-email') || {}).value || '';
+    localStorage.setItem('vs_vc_settings', JSON.stringify({ name, addr, phone, email }));
+    // Обновить заголовок
+    const sub = document.querySelector('.cab-sub');
+    if (sub && name) sub.textContent = name + (addr ? ' · ' + addr.split(',')[0] : '');
+    // Тост
+    const t = document.createElement('div');
+    t.textContent = '✓ Настройки сохранены';
+    t.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#111;color:#fff;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:600;z-index:9999;opacity:1;transition:opacity .4s;';
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2000);
+  }
+
+  // ── СЛОТЫ: добавить слот ──
+  function openAddSlot() {
+    document.getElementById('add-slot-overlay').style.display = 'flex';
+  }
+  function closeAddSlot() {
+    document.getElementById('add-slot-overlay').style.display = 'none';
+  }
+  function saveSlot() {
+    const date = document.getElementById('slot-new-date').value;
+    const time = document.getElementById('slot-new-time').value;
+    if (!date || !time) { alert('Заполните дату и время'); return; }
+    const d = new Date(date);
+    const days = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    const label = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+    const slotId = 's' + Date.now();
+    const ssId   = 'ss' + Date.now();
+    const card = document.createElement('div');
+    card.className = 'slot-card';
+    card.dataset.slotId = slotId;
+    card.innerHTML = `<div class="slot-date">${label}</div><div class="slot-time">${time}</div><div class="slot-status slot-free" id="${ssId}">● Свободен</div><button class="btn-slot" onclick="openSlotAssign('${slotId}','${label} · ${time}')">Назначить клиента</button>`;
+    document.getElementById('slots-grid').appendChild(card);
+    closeAddSlot();
+    document.getElementById('slot-new-date').value = '';
+    document.getElementById('slot-new-time').value = '';
+  }
+
+  // Загрузить настройки из localStorage при старте
+  (function loadSettings() {
+    const raw = localStorage.getItem('vs_vc_settings');
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      if (s.name  && document.getElementById('set-name'))  document.getElementById('set-name').value  = s.name;
+      if (s.addr  && document.getElementById('set-addr'))  document.getElementById('set-addr').value  = s.addr;
+      if (s.phone && document.getElementById('set-phone')) document.getElementById('set-phone').value = s.phone;
+      if (s.email && document.getElementById('set-email')) document.getElementById('set-email').value = s.email;
+      const sub = document.querySelector('.cab-sub');
+      if (sub && s.name) sub.textContent = s.name + (s.addr ? ' · ' + s.addr.split(',')[0] : '');
+    } catch(e) {}
+  })();
+
+  // Первичный рендер
+  renderClients();
+  renderStats();
 </script>
 
 </body>
