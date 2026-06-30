@@ -1041,11 +1041,7 @@
   // ── ПЛАТЕЖИ ──
 
   let payments = [
-    { id: 1, client: 'Иван Иванов',    service: 'Оформление визы · Италия',  date: '27 июня 2026', amount: '+15 000 ₽', type: 'in', manager: 'Анна Петрова',  status: 'visa_done' },
-    { id: 2, client: 'Анна Петрова',   service: 'Оформление визы · Франция', date: '26 июня 2026', amount: '+12 000 ₽', type: 'in', manager: 'Сергей Волков', status: 'contract' },
-    { id: 3, client: 'Сергей Козлов',  service: 'Оформление визы · Испания', date: '25 июня 2026', amount: '+10 000 ₽', type: 'in', manager: 'Анна Петрова',  status: 'waiting' },
-    { id: 4, client: 'Мария Смирнова', service: 'Оформление визы · Германия',date: '24 июня 2026', amount: '+8 000 ₽',  type: 'in', manager: 'Сергей Волков', status: 'processing' },
-    { id: 5, client: 'VisaSlot',       service: 'Комиссия платформы (июнь)', date: '1 июня 2026',  amount: '−4 500 ₽',  type: 'out', manager: '—',            status: null },
+    { id: 1, client: 'VisaSlot', service: 'Комиссия платформы (июнь)', date: '1 июня 2026', amount: '−4 500 ₽', type: 'out', manager: '—', status: null },
   ];
 
   function getStatus(key) { return CLIENT_STATUSES.find(s => s.key === key) || null; }
