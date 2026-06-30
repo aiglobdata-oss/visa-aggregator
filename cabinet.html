@@ -652,7 +652,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                 Открыть чат
               </button>
-              <button class="btn-sm btn-outline-sm" onclick="showToast('Откройте раздел документов в чате')">Загрузить документы</button>
+              <button class="btn-sm btn-outline-sm" onclick="uploadAllDocs()">Загрузить документы</button>
               <button class="btn-sm btn-outline-sm" onclick="downloadQuestionnaire()">Скачать опросник</button>
             </div>
           </div>
@@ -686,7 +686,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
               <div class="app-field"><p>Виза выдана</p><p>28 марта 2026</p></div>
             </div>
             <div class="app-actions">
-              <button class="btn-sm btn-outline-sm" onclick="showToast('История переписки загружается…')">История переписки</button>
+              <button class="btn-sm btn-outline-sm" onclick="showChatHistory()">История переписки</button>
             </div>
           </div>
         </div>
@@ -704,7 +704,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <div class="profile-layout">
           <div class="profile-photo-col">
             <div class="profile-avatar-big" id="profile-avatar-big">АА</div>
-            <button class="btn-photo" onclick="showToast('Загрузка фото будет доступна в приложении')">Изменить</button>
+            <button class="btn-photo" onclick="uploadPhoto()">📷 Изменить фото</button>
           </div>
 
           <div class="profile-form">
@@ -974,7 +974,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <script>
 // ─── STATE ───
-let currentUser = { name: 'Иванов Иван', initials: 'ИИ' };
+let currentUser = { name: '', initials: '', phone: '', photo: '' };
+
+// ─── LOCALSTORAGE HELPERS ───
+function getUsers() { try { return JSON.parse(localStorage.getItem('vs_users') || '[]'); } catch { return []; } }
+function saveUsers(u) { localStorage.setItem('vs_users', JSON.stringify(u)); }
+function findUser(phone) { return getUsers().find(u => u.phone === phone); }
+function saveCurrentUser(u) { currentUser = u; localStorage.setItem('vs_current_user', JSON.stringify(u)); }
+function loadSavedSession() {
+  try {
+    const u = JSON.parse(localStorage.getItem('vs_current_user') || 'null');
+    if (u && u.phone) { enterCabinet(u.initials, u.name, u.phone, u.photo, false); return true; }
+  } catch {}
+  return false;
+}
 
 // ─── TABS ───
 document.getElementById('tab-login').addEventListener('click', () => switchAuthTab('login'));
@@ -1029,9 +1042,17 @@ function startSmsTimer(btnId, sec = 60) {
 }
 
 // ─── LOGIN FLOW ───
+let _loginPhone = '';
 document.getElementById('btn-get-code').addEventListener('click', () => {
   const phone = document.getElementById('phone-input').value.replace(/\D/g, '');
   if (phone.length < 10) { showToast('Введите номер телефона полностью'); return; }
+  const user = findUser(phone);
+  if (!user) {
+    showToast('Номер не найден. Сначала зарегистрируйтесь →');
+    setTimeout(() => switchAuthTab('reg'), 1200);
+    return;
+  }
+  _loginPhone = phone;
   document.getElementById('sms-phone-display').textContent = '+7 ' + document.getElementById('phone-input').value;
   document.getElementById('phone-step').style.display = 'none';
   document.getElementById('sms-step').classList.add('visible');
@@ -1039,15 +1060,20 @@ document.getElementById('btn-get-code').addEventListener('click', () => {
   setTimeout(() => document.getElementById('sms-input').focus(), 100);
 });
 
+function doLogin() {
+  const user = findUser(_loginPhone);
+  if (user) enterCabinet(user.initials, user.name, user.phone, user.photo);
+}
+
 document.getElementById('btn-enter').addEventListener('click', () => {
   const code = document.getElementById('sms-input').value;
   if (code.length < 4) { showToast('Введите код из SMS'); return; }
-  enterCabinet('ИИ', 'Иван Иванов');
+  doLogin();
 });
 
 document.getElementById('sms-input').addEventListener('input', e => {
   e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
-  if (e.target.value.length === 6) enterCabinet('ИИ', 'Иван Иванов');
+  if (e.target.value.length === 6) doLogin();
 });
 
 document.getElementById('back-to-phone').addEventListener('click', () => {
@@ -1055,16 +1081,18 @@ document.getElementById('back-to-phone').addEventListener('click', () => {
   document.getElementById('phone-step').style.display = '';
 });
 
-document.getElementById('btn-telegram').addEventListener('click', () => enterCabinet('ТГ', 'Telegram User'));
-document.getElementById('btn-google').addEventListener('click', () => enterCabinet('ГГ', 'Google User'));
+document.getElementById('btn-telegram').addEventListener('click', () => enterCabinet('ТГ', 'Telegram User', 'tg', ''));
+document.getElementById('btn-google').addEventListener('click', () => enterCabinet('ГГ', 'Google User', 'google', ''));
 
 // ─── REGISTRATION FLOW ───
+let _regName = '', _regPhone = '';
 document.getElementById('btn-reg-next').addEventListener('click', () => {
-  const name = document.getElementById('reg-name').value.trim();
-  const phone = document.getElementById('reg-phone').value.replace(/\D/g, '');
-  if (!name) { showToast('Введите имя и фамилию'); return; }
-  if (phone.length < 10) { showToast('Введите номер телефона полностью'); return; }
+  _regName = document.getElementById('reg-name').value.trim();
+  _regPhone = document.getElementById('reg-phone').value.replace(/\D/g, '');
+  if (!_regName) { showToast('Введите имя и фамилию'); return; }
+  if (_regPhone.length < 10) { showToast('Введите номер телефона полностью'); return; }
   if (!regAgreed) { showToast('Примите условия использования'); return; }
+  if (findUser(_regPhone)) { showToast('Этот номер уже зарегистрирован. Войдите →'); setTimeout(() => switchAuthTab('login'), 1200); return; }
   document.getElementById('reg-sms-phone-display').textContent = '+7 ' + document.getElementById('reg-phone').value;
   document.getElementById('reg-main-step').style.display = 'none';
   document.getElementById('reg-sms-step').style.display = '';
@@ -1072,21 +1100,24 @@ document.getElementById('btn-reg-next').addEventListener('click', () => {
   setTimeout(() => document.getElementById('reg-sms-input').focus(), 100);
 });
 
+function doRegister() {
+  const initials = _regName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'НП';
+  const users = getUsers();
+  users.push({ phone: _regPhone, name: _regName, initials, photo: '' });
+  saveUsers(users);
+  enterCabinet(initials, _regName, _regPhone, '');
+  showToast('Добро пожаловать, ' + _regName.split(' ')[0] + '! 🎉');
+}
+
 document.getElementById('btn-reg-confirm').addEventListener('click', () => {
   const code = document.getElementById('reg-sms-input').value;
   if (code.length < 4) { showToast('Введите код из SMS'); return; }
-  const name = document.getElementById('reg-name').value.trim();
-  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'НП';
-  enterCabinet(initials, name);
+  doRegister();
 });
 
 document.getElementById('reg-sms-input').addEventListener('input', e => {
   e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
-  if (e.target.value.length === 6) {
-    const name = document.getElementById('reg-name').value.trim();
-    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'НП';
-    enterCabinet(initials, name);
-  }
+  if (e.target.value.length === 6) doRegister();
 });
 
 document.getElementById('reg-back').addEventListener('click', () => {
@@ -1094,23 +1125,49 @@ document.getElementById('reg-back').addEventListener('click', () => {
   document.getElementById('reg-main-step').style.display = '';
 });
 
-document.getElementById('btn-reg-telegram').addEventListener('click', () => enterCabinet('ТГ', 'Telegram User'));
-document.getElementById('btn-reg-google').addEventListener('click', () => enterCabinet('ГГ', 'Google User'));
+document.getElementById('btn-reg-telegram').addEventListener('click', () => enterCabinet('ТГ', 'Telegram User', 'tg', ''));
+document.getElementById('btn-reg-google').addEventListener('click', () => enterCabinet('ГГ', 'Google User', 'google', ''));
 
 // ─── ENTER CABINET ───
-function enterCabinet(initials, name) {
-  currentUser = { name, initials };
+function enterCabinet(initials, name, phone, photo, persist = true) {
+  currentUser = { name: name || '', initials: initials || '', phone: phone || '', photo: photo || '' };
+  if (persist) saveCurrentUser(currentUser);
+
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('cabinet-screen').classList.add('visible');
-  document.getElementById('cab-avatar').textContent = initials;
-  document.getElementById('profile-avatar-big').textContent = initials;
-  // Заполнить имя в дашборде
-  const firstName = (name || '').split(' ')[0] || name;
+
+  // Аватар — фото или инициалы
+  applyAvatarPhoto(photo, initials);
+
+  // Имя на дашборде
   document.getElementById('dash-name').textContent = name || 'Пользователь';
+
   // Заполнить профиль
   const parts = (name || '').split(' ');
   if (parts[0]) document.getElementById('profile-first-name').value = parts[0];
   if (parts[1]) document.getElementById('profile-last-name').value = parts[1] || '';
+  if (phone) document.querySelector('#section-profile .form-input[type="tel"]').value = '+7 (' + phone.slice(0,3) + ') ' + phone.slice(3,6) + '-' + phone.slice(6,8) + '-' + phone.slice(8,10);
+}
+
+function applyAvatarPhoto(photo, initials) {
+  const bigAv = document.getElementById('profile-avatar-big');
+  const smallAv = document.getElementById('cab-avatar');
+  if (photo) {
+    // Показываем фото
+    bigAv.style.backgroundImage = `url(${photo})`;
+    bigAv.style.backgroundSize = 'cover';
+    bigAv.style.backgroundPosition = 'center';
+    bigAv.textContent = '';
+    smallAv.style.backgroundImage = `url(${photo})`;
+    smallAv.style.backgroundSize = 'cover';
+    smallAv.style.backgroundPosition = 'center';
+    smallAv.textContent = '';
+  } else {
+    bigAv.style.backgroundImage = '';
+    bigAv.textContent = initials || '';
+    smallAv.style.backgroundImage = '';
+    smallAv.textContent = initials || '';
+  }
 }
 
 // ─── NAVIGATION ───
@@ -1136,7 +1193,10 @@ document.querySelectorAll('.bottom-nav-item[data-section]').forEach(item => {
 });
 
 document.getElementById('nav-logout').addEventListener('click', () => {
-  if (confirm('Выйти из аккаунта?')) window.location.href = 'landing.html';
+  if (confirm('Выйти из аккаунта?')) {
+    localStorage.removeItem('vs_current_user');
+    window.location.href = 'landing.html';
+  }
 });
 
 // ─── NOTIFICATIONS ───
@@ -1182,10 +1242,14 @@ function saveProfile() {
   const fullName = [first, last].filter(Boolean).join(' ');
   if (fullName) {
     const initials = [first[0], last[0]].filter(Boolean).join('').toUpperCase();
-    document.getElementById('cab-avatar').textContent = initials || currentUser.initials;
-    document.getElementById('profile-avatar-big').textContent = initials || currentUser.initials;
+    currentUser = { ...currentUser, name: fullName, initials };
+    applyAvatarPhoto(currentUser.photo, initials);
     document.getElementById('dash-name').textContent = fullName;
-    currentUser = { name: fullName, initials };
+    // Обновить запись в localStorage
+    const users = getUsers();
+    const idx = users.findIndex(u => u.phone === currentUser.phone);
+    if (idx >= 0) { users[idx] = { ...users[idx], name: fullName, initials }; saveUsers(users); }
+    saveCurrentUser(currentUser);
   }
   showToast('Профиль сохранён');
 }
@@ -1200,30 +1264,104 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ─── DOC UPLOAD ───
-function uploadDoc(btn, name) {
+// ─── PHOTO UPLOAD ───
+function uploadPhoto() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.pdf,.jpg,.jpeg,.png';
+  input.accept = 'image/*';
   input.onchange = () => {
-    if (input.files[0]) {
-      const item = btn.closest('.doc-item');
-      item.querySelector('.doc-status').textContent = '⏳ Загружается…';
-      item.querySelector('.doc-status').className = 'doc-status doc-wait';
-      btn.style.display = 'none';
-      setTimeout(() => {
-        item.querySelector('.doc-status').textContent = '✓ Получен';
-        item.querySelector('.doc-status').className = 'doc-status doc-ok';
-        showToast(name + ' загружен');
-      }, 1500);
-    }
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('Файл слишком большой. Максимум 5 МБ'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const photo = e.target.result;
+      currentUser = { ...currentUser, photo };
+      applyAvatarPhoto(photo, currentUser.initials);
+      // Сохранить фото
+      const users = getUsers();
+      const idx = users.findIndex(u => u.phone === currentUser.phone);
+      if (idx >= 0) { users[idx].photo = photo; saveUsers(users); }
+      saveCurrentUser(currentUser);
+      showToast('Фото обновлено ✓');
+    };
+    reader.readAsDataURL(file);
   };
   input.click();
 }
 
-// ─── CHAT ───
+// ─── DOC UPLOAD ───
+function uploadDoc(btn, name) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png,.heic';
+  input.onchange = () => {
+    if (!input.files[0]) return;
+    const item = btn.closest('.doc-item');
+    item.querySelector('.doc-status').textContent = '⏳ Загружается…';
+    item.querySelector('.doc-status').className = 'doc-status doc-wait';
+    btn.style.display = 'none';
+    setTimeout(() => {
+      item.querySelector('.doc-status').textContent = '✓ Получен';
+      item.querySelector('.doc-status').className = 'doc-status doc-ok';
+      showToast('«' + name + '» загружен ✓');
+    }, 1200);
+  };
+  input.click();
+}
+
+// ─── BULK DOC UPLOAD ───
+function uploadAllDocs() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png,.heic';
+  input.multiple = true;
+  input.onchange = () => {
+    if (!input.files.length) return;
+    showToast('Загружено файлов: ' + input.files.length + ' ✓');
+  };
+  input.click();
+}
+
+// ─── CHAT — передаём данные пользователя в prototype ───
 function openChat() {
+  // Сохраняем текущего пользователя чтобы prototype.html знал кто пишет
+  localStorage.setItem('vs_current_user', JSON.stringify(currentUser));
   window.open('prototype.html?mode=slot', '_blank');
+}
+
+// ─── CHAT HISTORY MODAL ───
+function showChatHistory() {
+  const overlay = document.getElementById('chat-history-overlay');
+  if (overlay) { overlay.style.display = 'flex'; return; }
+  const el = document.createElement('div');
+  el.id = 'chat-history-overlay';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;';
+  el.innerHTML = `
+    <div style="background:#fff;border-radius:20px;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+      <div style="padding:18px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;font-size:16px;font-weight:800;">История переписки · Франция 🇫🇷</div>
+        <button onclick="document.getElementById('chat-history-overlay').style.display='none'" style="border:none;background:none;font-size:22px;cursor:pointer;color:#6b7280;">×</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+        ${[
+          { from: 'bot', text: 'Добрый день! Я ваш консультант Анна. Слот в консульство Франции забронирован на 12 марта 14:00.', time: '1 мар, 09:12' },
+          { from: 'user', text: 'Здравствуйте! Отлично, спасибо. Список документов уже готовить?', time: '1 мар, 09:45' },
+          { from: 'bot', text: 'Да, пришлите: загранпаспорт (скан разворота), фото 3.5×4.5, справку с работы и страховку. Опросник уже у вас.', time: '1 мар, 10:02' },
+          { from: 'user', text: 'Принял. Всё скину до конца дня.', time: '1 мар, 10:15' },
+          { from: 'bot', text: 'Документы получены и проверены. Всё в порядке, можете идти на подачу. Удачи! 🍀', time: '10 мар, 14:30' },
+          { from: 'user', text: 'Спасибо большое! Визу одобрили ✅', time: '25 мар, 18:22' },
+          { from: 'bot', text: 'Поздравляем! Приятного путешествия во Францию 🇫🇷', time: '25 мар, 18:35' },
+        ].map(m => `
+          <div style="display:flex;flex-direction:column;align-items:${m.from === 'user' ? 'flex-end' : 'flex-start'};">
+            <div style="max-width:80%;padding:10px 14px;border-radius:${m.from === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.from === 'user' ? '#4338ca' : '#f3f4f6'};color:${m.from === 'user' ? '#fff' : '#111827'};font-size:14px;line-height:1.5;">${m.text}</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:3px;">${m.time}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) el.style.display = 'none'; });
+  document.body.appendChild(el);
 }
 
 // ─── CARD QUIZ ───
@@ -1248,6 +1386,9 @@ function downloadQuestionnaire() {
 // ─── DELETE ACCOUNT ───
 function confirmDelete() {
   if (confirm('Вы уверены? Все данные будут удалены без возможности восстановления.')) {
+    localStorage.removeItem('vs_current_user');
+    const users = getUsers().filter(u => u.phone !== currentUser.phone);
+    saveUsers(users);
     showToast('Аккаунт удалён');
     setTimeout(() => window.location.href = 'landing.html', 2000);
   }
@@ -1255,6 +1396,9 @@ function confirmDelete() {
 
 // Init badges
 updateNotifBadge();
+
+// Автовход при сохранённой сессии
+loadSavedSession();
 </script>
 </body>
 </html>

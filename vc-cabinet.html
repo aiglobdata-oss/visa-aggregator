@@ -1223,8 +1223,8 @@
         <div class="client-cell">
           <div class="client-ava" style="background:var(--indigo);color:#fff;">${initials}</div>
           <div>
-            <div style="font-weight:600;">${data.client || 'Клиент'}</div>
-            <div style="font-size:12px;color:var(--muted);">Новая заявка · ${data.time || ''}</div>
+            <div style="font-weight:600;">${data.client || 'Клиент'}${data.fromCabinet ? ' <span style="background:#dcfce7;color:#15803d;font-size:10px;font-weight:700;border-radius:8px;padding:1px 6px;vertical-align:middle;">ЛК</span>' : ''}</div>
+            <div style="font-size:12px;color:var(--muted);">${data.clientPhone ? '+7' + data.clientPhone + ' · ' : ''}${data.time || ''}</div>
           </div>
         </div>
       </td>

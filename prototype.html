@@ -917,6 +917,14 @@
   const _m = urlParams.get('mode');
   const initialMode = _m === 'visa' ? 'visa' : _m === 'vc' ? 'vc' : 'slot';
 
+  // Читаем зарегистрированного пользователя из кабинета
+  let _cabinetUser = null;
+  try { _cabinetUser = JSON.parse(localStorage.getItem('vs_current_user') || 'null'); } catch {}
+  if (_cabinetUser && _cabinetUser.name) {
+    window._chatClientName = _cabinetUser.name;
+    window._chatClientPhone = _cabinetUser.phone || '';
+  }
+
   const state = {
     step: 1,
     country: null,
@@ -1587,11 +1595,16 @@
         const purposeVal = purposeQ ? (state.answers[questions.indexOf(purposeQ)] || '') : '';
         const reqId = 'req_' + Date.now();
         window._chatReqId = reqId;
-        window._chatClientName = (state.answers && state.answers[0]) || 'Клиент';
+        // Имя: если пришёл из кабинета — берём оттуда, иначе из анкеты
+        if (!window._chatClientName) {
+          window._chatClientName = (state.answers && state.answers[0]) || 'Клиент';
+        }
         vsDb.ref('vs_notifications').push({
           type: 'new_request',
           reqId,
           client: window._chatClientName,
+          clientPhone: window._chatClientPhone || '',
+          fromCabinet: !!_cabinetUser,
           country: countryVal,
           purpose: purposeVal,
           biometrics: state.biometrics,
