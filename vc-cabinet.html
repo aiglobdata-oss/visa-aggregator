@@ -1392,7 +1392,6 @@
     document.getElementById('cm-date').value = new Date().toISOString().split('T')[0];
     toggleSlotField();
     document.getElementById('create-modal-overlay').classList.add('open');
-    setTimeout(() => document.getElementById('cm-first').focus(), 100);
   }
 
   function closeCreateModal() {
@@ -1568,7 +1567,7 @@
 
   <!-- Модал: Создать заявку (вне секций — position:fixed работает корректно) -->
   <div class="create-modal-overlay" id="create-modal-overlay" onclick="if(event.target===this)closeCreateModal()">
-    <div class="create-modal" style="max-width:560px;max-height:90vh;overflow-y:auto;">
+    <div class="create-modal" style="max-width:560px;max-height:90vh;overflow-y:auto;overflow-x:hidden;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <h3 style="font-size:18px;font-weight:800;margin:0;">Новая заявка</h3>
         <button onclick="closeCreateModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:#6b7280;line-height:1;">×</button>
@@ -1576,11 +1575,11 @@
 
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#9ca3af;margin-bottom:10px;">Клиент</div>
       <div class="form-row">
-        <div><label>Имя *</label><input id="cm-first" placeholder="Иван" autocapitalize="words"></div>
-        <div><label>Фамилия *</label><input id="cm-last" placeholder="Иванов" autocapitalize="words"></div>
+        <div><label>Имя *</label><input id="cm-first" placeholder="Иван" autocomplete="off" autocapitalize="words"></div>
+        <div><label>Фамилия *</label><input id="cm-last" placeholder="Иванов" autocomplete="off" autocapitalize="words"></div>
       </div>
       <div class="form-row">
-        <div><label>Телефон *</label><input id="cm-phone" placeholder="+7 (___) ___-__-__" inputmode="tel"></div>
+        <div><label>Телефон *</label><input id="cm-phone" placeholder="+7 (___) ___-__-__" autocomplete="off" inputmode="tel"></div>
         <div><label>Источник</label><select id="cm-source"><option>С улицы / офис</option><option>Рекомендация</option><option>Соцсети</option><option>Сайт</option><option>Другое</option></select></div>
       </div>
 
