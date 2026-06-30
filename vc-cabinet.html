@@ -417,14 +417,12 @@
 
         <!-- Доход с выпадашкой по месяцам -->
         <div class="stat-card" style="position:relative;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="stat-label">Доход</div>
-            <button id="income-period-btn" onclick="toggleIncomeDrop(event)" style="display:inline-flex;align-items:center;gap:4px;background:#eef2ff;color:var(--indigo);border:none;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">
-              <span id="income-period-label">за текущий месяц</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-          </div>
+          <div class="stat-label">Доход</div>
           <div class="stat-value" id="stat-income" style="margin-top:6px;">—</div>
+          <button id="income-period-btn" onclick="toggleIncomeDrop(event)" style="display:inline-flex;align-items:center;gap:4px;background:#eef2ff;color:var(--indigo);border:none;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;">
+            <span id="income-period-label">за текущий месяц</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
           <!-- дропдаун -->
           <div id="income-drop" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.13);padding:6px;min-width:180px;z-index:99;">
             <div id="income-months-list"></div>
