@@ -207,7 +207,7 @@
     <nav class="nav-links">
       <a href="#how">Возможности</a>
       <a href="#pricing">Тарифы</a>
-      <button id="vc-btn-login" onclick="document.getElementById('vc-auth-overlay').classList.add('open')" class="btn btn-outline">Войти</button>
+      <button id="vc-btn-login" onclick="openVcAuth()" class="btn btn-outline">Войти</button>
       <div id="vc-header-avatar" style="display:none;width:36px;height:36px;border-radius:50%;background:var(--indigo);color:#fff;font-size:13px;font-weight:700;align-items:center;justify-content:center;cursor:pointer;" onclick="window.location.href='vc-cabinet.html'">ВЦ</div>
       <a href="landing.html" class="btn btn-primary" style="color:#fff!important;text-decoration:none;">Для физлиц</a>
     </nav>
@@ -495,8 +495,8 @@
     </div>
 
     <div class="vc-auth-tabs">
-      <div class="vc-auth-tab active" data-tab="login">Войти</div>
-      <div class="vc-auth-tab" data-tab="reg">Регистрация</div>
+      <div class="vc-auth-tab" data-tab="login">Войти</div>
+      <div class="vc-auth-tab active" data-tab="reg">Регистрация</div>
     </div>
 
     <div id="vc-auth-body">
@@ -544,18 +544,39 @@
 
 <script>
   function vcLoginSuccess() {
+    const orgVal = document.getElementById('vc-org') ? document.getElementById('vc-org').value.trim() : '';
+    const contactVal = document.getElementById('vc-contact') ? document.getElementById('vc-contact').value.trim() : '';
+    const phoneEl = document.querySelector('#vc-auth-body input[type="tel"], #vc-auth-body input[inputmode="tel"], #vc-phone');
+    const phoneRaw = phoneEl ? phoneEl.value.replace(/\D/g,'') : '';
+
+    const user = { type: 'center', org: orgVal || 'Визовый центр', contact: contactVal, phone: phoneRaw, logo: '' };
+    if (phoneRaw) {
+      const users = (() => { try { return JSON.parse(localStorage.getItem('vs_users') || '[]'); } catch { return []; } })();
+      const existing = users.find(u => u.phone === phoneRaw);
+      if (!existing) users.push(user);
+      localStorage.setItem('vs_users', JSON.stringify(users));
+      localStorage.setItem('vs_current_user', JSON.stringify(existing || user));
+    }
     document.getElementById('vc-auth-overlay').classList.remove('open');
-    document.getElementById('vc-btn-login').style.display = 'none';
-    const ava = document.getElementById('vc-header-avatar');
-    ava.style.display = 'flex';
-    setTimeout(() => { window.location.href = 'vc-cabinet.html'; }, 300);
+    setTimeout(() => { window.location.href = 'vc-cabinet.html'; }, 200);
+  }
+
+  function openVcAuth() {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('vs_current_user') || 'null'); } catch { return null; } })();
+    if (saved && saved.type === 'center') { window.location.href = 'vc-cabinet.html'; return; }
+    const overlay = document.getElementById('vc-auth-overlay');
+    overlay.classList.add('open');
+    vcTab = 'reg';
+    document.querySelectorAll('.vc-auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'reg'));
+    document.getElementById('vc-org-field').style.display = 'block';
+    document.getElementById('vc-contact-field').style.display = 'block';
   }
 
   document.getElementById('vc-auth-close').addEventListener('click', () => {
     document.getElementById('vc-auth-overlay').classList.remove('open');
   });
   // Табы
-  let vcTab = 'login';
+  let vcTab = 'reg';
   document.querySelectorAll('.vc-auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.vc-auth-tab').forEach(t => t.classList.remove('active'));

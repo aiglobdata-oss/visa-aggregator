@@ -1152,8 +1152,8 @@
 
     <!-- Войти / Регистрация -->
     <div class="auth-tabs">
-      <div class="auth-tab active" data-tab="login">Войти</div>
-      <div class="auth-tab" data-tab="reg">Регистрация</div>
+      <div class="auth-tab" data-tab="login">Войти</div>
+      <div class="auth-tab active" data-tab="reg">Регистрация</div>
     </div>
 
     <!-- Форма -->
@@ -1213,19 +1213,32 @@
   const authState = { loggedIn: false, type: 'person', name: '', initials: '' };
 
   function loginSuccess(initials, type) {
+    const nameVal = document.getElementById('auth-name') ? document.getElementById('auth-name').value.trim() : '';
+    const phoneRaw = document.getElementById('auth-phone') ? document.getElementById('auth-phone').value.replace(/\D/g,'') : '';
+    const isReg = currentAuthTab === 'reg';
+
+    if (isReg && phoneRaw) {
+      // Сохранить нового пользователя
+      const users = (() => { try { return JSON.parse(localStorage.getItem('vs_users') || '[]'); } catch { return []; } })();
+      const existing = users.find(u => u.phone === phoneRaw);
+      const user = existing || { phone: phoneRaw, name: nameVal || 'Пользователь', initials, photo: '', type };
+      if (!existing) users.push(user);
+      localStorage.setItem('vs_users', JSON.stringify(users));
+      localStorage.setItem('vs_current_user', JSON.stringify(user));
+    } else if (phoneRaw) {
+      // Вход — найти существующего
+      const users = (() => { try { return JSON.parse(localStorage.getItem('vs_users') || '[]'); } catch { return []; } })();
+      const found = users.find(u => u.phone === phoneRaw);
+      if (found) localStorage.setItem('vs_current_user', JSON.stringify(found));
+    }
+
     authState.loggedIn = true;
     authState.type = type;
     authState.initials = initials;
-    // Скрыть кнопку Войти, показать аватар
-    document.getElementById('btn-login-open').style.display = 'none';
-    const ava = document.getElementById('header-avatar');
-    ava.style.display = 'flex';
-    ava.textContent = initials;
     closeAuthModal();
-    // Редирект в личный кабинет
     setTimeout(() => {
       window.location.href = type === 'center' ? 'vc-cabinet.html' : 'cabinet.html';
-    }, 300);
+    }, 200);
   }
 
   function goToCabinet() {
@@ -1233,7 +1246,27 @@
   }
 
   function openAuthModal(afterPayment) {
+    // Проверить — есть ли сохранённая сессия
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('vs_current_user') || 'null'); } catch { return null; } })();
+    if (saved && saved.phone) {
+      // Уже залогинен — сразу в кабинет
+      window.location.href = 'cabinet.html';
+      return;
+    }
+    // Показать фото на карточке если есть
+    const savedUsers = (() => { try { return JSON.parse(localStorage.getItem('vs_users') || '[]'); } catch { return []; } })();
+    const cardEl = document.querySelector('#auth-overlay .user-type-tabs > div, #auth-overlay [data-type="person"]');
+    if (cardEl) {
+      const imgEl = cardEl.querySelector('.auth-card-photo');
+      // no-op, handled below via updateCardPhoto()
+    }
     document.getElementById('auth-overlay').classList.add('open');
+    // Всегда открывать на вкладке «Регистрация»
+    currentAuthTab = 'reg';
+    document.querySelectorAll('.auth-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === 'reg');
+    });
+    updateAuthForm();
     if (afterPayment) {
       document.getElementById('auth-overlay').dataset.afterPayment = '1';
     }
@@ -1257,8 +1290,8 @@
     });
   });
 
-  // Войти / Регистрация табы
-  let currentAuthTab = 'login';
+  // Войти / Регистрация табы — по умолчанию открывается Регистрация
+  let currentAuthTab = 'reg';
   document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
