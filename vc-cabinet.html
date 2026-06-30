@@ -504,6 +504,26 @@
 
       <div class="settings-section">
         <div class="settings-title">Информация о центре</div>
+
+        <!-- Логотип -->
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;">
+          <div id="vc-logo-wrap" style="width:80px;height:80px;border-radius:16px;border:2px dashed var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .15s;flex-shrink:0;" onclick="uploadVcLogo()" title="Нажмите чтобы загрузить логотип">
+            <img id="vc-logo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:contain;">
+            <div id="vc-logo-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span style="font-size:10px;color:#9ca3af;font-weight:600;text-align:center;line-height:1.2;">Логотип<br>центра</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Логотип визового центра</div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">PNG, JPG или SVG · до 2 МБ · рекомендуется квадратный</div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="uploadVcLogo()" style="border:1.5px solid var(--indigo);color:var(--indigo);background:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;" onmouseover="this.style.background='var(--indigo-light)'" onmouseout="this.style.background='none'">Загрузить</button>
+              <button id="vc-logo-remove" onclick="removeVcLogo()" style="display:none;border:1.5px solid #e5e7eb;color:#6b7280;background:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='#e5e7eb';this.style.color='#6b7280'">Удалить</button>
+            </div>
+          </div>
+        </div>
+
         <div class="form-field"><label class="form-label">Название</label><input class="form-input" value="Центр Путешествий №1"></div>
         <div class="form-field"><label class="form-label">Адрес</label><input class="form-input" value="Москва, ул. Садовая-Кудринская, 3"></div>
         <div class="form-field"><label class="form-label">Телефон</label><input class="form-input" value="+7 (495) 123-45-67"></div>
@@ -1315,6 +1335,58 @@
 
   // Заполнить при загрузке
   fillSpecSelects();
+
+  // ── ЛОГОТИП ВИЗОВОГО ЦЕНТРА ──
+  (function initVcLogo() {
+    const saved = localStorage.getItem('vs_vc_logo');
+    if (saved) applyVcLogo(saved);
+  })();
+
+  function uploadVcLogo() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { alert('Файл слишком большой. Максимум 2 МБ'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        localStorage.setItem('vs_vc_logo', e.target.result);
+        applyVcLogo(e.target.result);
+        // Обновить логотип в хедере если есть
+        const hdrLogo = document.getElementById('vc-header-logo-img');
+        if (hdrLogo) { hdrLogo.src = e.target.result; hdrLogo.style.display = ''; }
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  }
+
+  function applyVcLogo(src) {
+    const img = document.getElementById('vc-logo-img');
+    const placeholder = document.getElementById('vc-logo-placeholder');
+    const removeBtn = document.getElementById('vc-logo-remove');
+    const wrap = document.getElementById('vc-logo-wrap');
+    img.src = src;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    removeBtn.style.display = '';
+    wrap.style.border = '2px solid var(--line)';
+  }
+
+  function removeVcLogo() {
+    localStorage.removeItem('vs_vc_logo');
+    const img = document.getElementById('vc-logo-img');
+    const placeholder = document.getElementById('vc-logo-placeholder');
+    const removeBtn = document.getElementById('vc-logo-remove');
+    const wrap = document.getElementById('vc-logo-wrap');
+    img.src = '';
+    img.style.display = 'none';
+    placeholder.style.display = 'flex';
+    removeBtn.style.display = 'none';
+    wrap.style.border = '2px dashed var(--line)';
+  }
 
   function assignSpec(sel) {
     const name = sel.value;
