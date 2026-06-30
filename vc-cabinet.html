@@ -236,37 +236,37 @@
     #section-applications .filter-bar > div { flex-shrink: 0; }
 
     .app-table thead { display: none; }
-    .app-table { display: block; width: 100%; border-collapse: separate !important; border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
-    .app-table tbody { display: block; width: 100%; }
-    .app-table tr { display: block; position: relative; background: #fff; border: 1px solid var(--line) !important; border-radius: 16px; margin-bottom: 14px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
-    .app-table td,
-    .app-table tr:last-child td,
-    .app-table tr:hover td { display: block; border: none !important; border-bottom: none !important; padding: 0; background: transparent !important; }
+    .app-table { display: block !important; width: 100%; border-collapse: separate !important; border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
+    .app-table tbody { display: block !important; width: 100%; }
+    .app-table tr { display: block !important; position: relative; background: #fff; border: 1px solid var(--line) !important; border-radius: 16px; margin-bottom: 14px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .app-table td { display: block !important; border: none !important; border-bottom: none !important; padding: 0 !important; background: transparent !important; }
+    .app-table tr:last-child td { border: none !important; border-bottom: none !important; background: transparent !important; }
+    .app-table tr:hover td { background: transparent !important; }
 
     /* Клиент (col 1) */
-    .app-table td:nth-child(1) { margin-bottom: 12px; font-size: 15px; padding-right: 44px; }
+    .app-table td:nth-child(1) { margin-bottom: 12px !important; font-size: 15px; padding-right: 44px !important; }
 
     /* Страна (col 2) + Тип визы (col 3): в одну строку */
-    .app-table td:nth-child(2) { display: inline; font-size: 14px; font-weight: 600; color: var(--ink); }
-    .app-table td:nth-child(3) { display: inline; font-size: 14px; color: var(--muted); margin-left: 6px; }
+    .app-table td:nth-child(2) { display: inline !important; font-size: 14px; font-weight: 600; color: var(--ink); }
+    .app-table td:nth-child(3) { display: inline !important; font-size: 14px; color: var(--muted); margin-left: 6px; }
     .app-table td:nth-child(3):after { content: ""; display: block; margin-bottom: 8px; }
 
     /* Дата (col 4) */
-    .app-table td:nth-child(4) { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .app-table td:nth-child(4) { font-size: 13px; color: var(--muted); margin-bottom: 4px !important; }
     .app-table td:nth-child(4):before { content: "📅 "; }
 
     /* Слот (col 5) */
-    .app-table td:nth-child(5) { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .app-table td:nth-child(5) { font-size: 13px; color: var(--muted); margin-bottom: 12px !important; }
     .app-table td:nth-child(5):before { content: "🕐 "; }
 
     /* Специалист (col 6) + Статус (col 7): в одну строку одинаковой высоты */
-    .app-table td:nth-child(6) { display: inline-block; width: calc(55% - 4px); vertical-align: top; margin-bottom: 10px; }
+    .app-table td:nth-child(6) { display: inline-block !important; width: calc(55% - 4px); vertical-align: top; margin-bottom: 10px !important; }
     .app-table td:nth-child(6) select, .app-table td:nth-child(6) .spec-select { width: 100%; box-sizing: border-box; height: 36px; }
-    .app-table td:nth-child(7) { display: inline-block; width: 44%; vertical-align: top; margin-bottom: 10px; padding-left: 6px; box-sizing: border-box; }
+    .app-table td:nth-child(7) { display: inline-block !important; width: 44%; vertical-align: top; margin-bottom: 10px !important; padding-left: 6px !important; box-sizing: border-box; }
     .app-table td:nth-child(7) .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; }
 
     /* Действия (col 8) */
-    .app-table td:nth-child(8) { margin-bottom: 0; }
+    .app-table td:nth-child(8) { margin-bottom: 0 !important; }
     .app-table td:nth-child(8) .action-btns { flex-wrap: wrap; gap: 8px; }
     .app-table td:nth-child(8) .btn-xs { flex: 1; min-width: 80px; justify-content: center; padding: 8px 10px; font-size: 13px; }
 
@@ -2468,18 +2468,18 @@
           ${m.avatar ? `<img src="${m.avatar}" style="width:100%;height:100%;object-fit:cover;">` : '👤'}
         </div>
         <div style="flex:1;min-width:0;">
-          <div onclick="openEditManager(${m.id})" style="font-weight:700;font-size:15px;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;color:var(--indigo);">${m.name}</div>
+          <div onclick="openEditManager(${m.id})" style="font-weight:700;font-size:15px;cursor:pointer;color:var(--indigo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.name}</div>
           <div style="font-size:12px;margin-top:3px;display:flex;align-items:center;gap:5px;">
             <span style="width:8px;height:8px;border-radius:50%;background:${m.active ? '#22c55e' : '#9ca3af'};flex-shrink:0;"></span>
-            <span style="color:${m.active ? '#15803d' : '#9ca3af'};font-weight:600;">${m.active ? 'в сети' : 'не в сети'}</span>
-            <span style="color:var(--muted);">· ${m.deals} сделок</span>
+            <span style="color:${m.active ? '#15803d' : '#9ca3af'};font-weight:600;white-space:nowrap;">${m.active ? 'в сети' : 'не в сети'}</span>
+            <span style="color:var(--muted);white-space:nowrap;">· ${m.deals} сделок</span>
           </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-          <div onclick="toggleManager(${m.id}); renderSettingsManagers();" style="width:44px;height:24px;border-radius:12px;background:${m.active ? 'var(--indigo)' : '#d1d5db'};cursor:pointer;position:relative;transition:background .2s;">
-            <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;${m.active ? 'right:2px' : 'left:2px'};transition:all .2s;"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+            <div onclick="toggleManager(${m.id}); renderSettingsManagers();" style="width:44px;height:24px;border-radius:12px;background:${m.active ? 'var(--indigo)' : '#d1d5db'};cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;${m.active ? 'right:2px' : 'left:2px'};transition:all .2s;"></div>
+            </div>
+            <button onclick="deleteManager(${m.id}); renderSettingsManagers();" style="background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Удалить</button>
           </div>
-          <button onclick="deleteManager(${m.id}); renderSettingsManagers();" style="background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Удалить</button>
         </div>
       </div>
     `).join('');
