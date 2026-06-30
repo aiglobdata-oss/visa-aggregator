@@ -202,8 +202,12 @@
   .mob-nav { display: none; }
   @media (max-width: 640px) {
     .cab-sidebar { display: none; }
+    .cab-header { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 52px; padding: 0 12px; }
+    .cab-layout { padding-top: 52px; }
     .cab-main { padding: 12px 12px 80px; }
     .cab-center-name { display: none; }
+    #mgr-login-btn { display: none !important; }
+    #mgr-logout-btn { font-size: 11px !important; padding: 4px 10px !important; }
 
     /* ── Мобильная навигация ── */
     .mob-nav {
@@ -603,6 +607,14 @@
 
     <!-- ── НАСТРОЙКИ ── -->
     <div class="section" id="section-settings">
+      <!-- Кнопка входа для менеджера — только на мобиле, только пока не залогинен -->
+      <div id="mob-mgr-login-banner" style="display:none;background:var(--indigo-light);border:1.5px solid var(--indigo);border-radius:14px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--indigo);">Вход для менеджера</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Введите телефон и код от РОП</div>
+        </div>
+        <button onclick="openMgrLogin()" style="background:var(--indigo);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Войти</button>
+      </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;">
         <div class="section-title">Настройки</div>
         <div style="display:flex;gap:8px;">
@@ -2713,6 +2725,10 @@
     } else {
       if (stabCenter) stabCenter.style.display = '';
     }
+
+    // Баннер входа на мобиле (виден только на узких экранах и только когда не залогинен)
+    const mobBanner = document.getElementById('mob-mgr-login-banner');
+    if (mobBanner) mobBanner.style.display = (admin && window.innerWidth <= 640) ? 'flex' : 'none';
 
     // Перерисовать
     renderManagers();
