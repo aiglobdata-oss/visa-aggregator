@@ -1337,6 +1337,28 @@
     if (saved) applyVcLogo(saved);
   })();
 
+  function compressToLimit(img, maxBytes) {
+    const MAX_DIM = 800;
+    const canvas = document.createElement('canvas');
+    const ratio = Math.min(MAX_DIM / img.width, MAX_DIM / img.height, 1);
+    canvas.width  = Math.round(img.width  * ratio);
+    canvas.height = Math.round(img.height * ratio);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    let quality = 0.92;
+    let result = canvas.toDataURL('image/jpeg', quality);
+    while (result.length > maxBytes && quality > 0.3) {
+      quality = Math.round((quality - 0.08) * 100) / 100;
+      result = canvas.toDataURL('image/jpeg', quality);
+    }
+    if (result.length > maxBytes) {
+      canvas.width  = Math.round(canvas.width  / 2);
+      canvas.height = Math.round(canvas.height / 2);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      result = canvas.toDataURL('image/jpeg', 0.82);
+    }
+    return result;
+  }
+
   function uploadVcLogo() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -1347,16 +1369,9 @@
       if (file.size > 2 * 1024 * 1024) { alert('Файл слишком большой. Максимум 2 МБ'); return; }
       const reader = new FileReader();
       reader.onload = e => {
-        // Сжимаем до 256×256 чтобы не переполнить localStorage
         const imgEl = new Image();
         imgEl.onload = () => {
-          const SIZE = 256;
-          const canvas = document.createElement('canvas');
-          const ratio = Math.min(SIZE / imgEl.width, SIZE / imgEl.height);
-          canvas.width  = Math.round(imgEl.width  * ratio);
-          canvas.height = Math.round(imgEl.height * ratio);
-          canvas.getContext('2d').drawImage(imgEl, 0, 0, canvas.width, canvas.height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          const compressed = compressToLimit(imgEl, 1_000_000);
           try { localStorage.setItem('vs_vc_logo', compressed); } catch(err) { console.warn('logo save failed', err); }
           applyVcLogo(compressed);
         };
