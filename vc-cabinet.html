@@ -109,6 +109,17 @@
   .btn-xs-primary:hover { background: var(--indigo-dark); }
   .btn-xs-outline { background: none; border: 1.5px solid var(--line); color: var(--ink); }
   .btn-xs-outline:hover { border-color: var(--indigo); color: var(--indigo); }
+  .trash-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 8px; opacity: 0.55; transition: opacity .15s, background .15s; line-height: 1; }
+  .trash-btn:hover { opacity: 1; background: #fee2e2; }
+  .del-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  .del-box { background: #fff; border-radius: 18px; padding: 32px 28px 24px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+  .del-box h3 { margin: 0 0 8px; font-size: 18px; color: var(--ink); }
+  .del-box p { margin: 0 0 24px; font-size: 14px; color: var(--muted); }
+  .del-actions { display: flex; gap: 12px; justify-content: center; }
+  .del-yes { background: #dc2626; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .del-yes:hover { background: #b91c1c; }
+  .del-no { background: #f3f4f6; color: var(--ink); border: none; border-radius: 10px; padding: 10px 28px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .del-no:hover { background: #e5e7eb; }
 
   /* ── STATS ── */
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
@@ -298,6 +309,7 @@
             <th>Специалист</th>
             <th>Статус</th>
             <th>Действия</th>
+            <th style="width:44px;"></th>
           </tr>
         </thead>
         <tbody>
@@ -307,6 +319,7 @@
             <td><select class="spec-select" onchange="assignSpec(this)"><option value="">— не назначен —</option></select></td>
             <td><span class="badge badge-new">Новая</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-1','Иван Иванов')">Чат</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
           <tr data-status="new">
             <td><div class="client-cell"><div class="client-ava">АП</div><div><div style="font-weight:600;">Анна Петрова</div><div style="font-size:12px;color:var(--muted);">+7 (916) 234-56-78</div></div></div></td>
@@ -314,6 +327,7 @@
             <td><select class="spec-select" onchange="assignSpec(this)"><option value="">— не назначен —</option></select></td>
             <td><span class="badge badge-new">Новая</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-2','Анна Петрова')">Чат</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
           <tr data-status="new">
             <td><div class="client-cell"><div class="client-ava">СК</div><div><div style="font-weight:600;">Сергей Козлов</div><div style="font-size:12px;color:var(--muted);">+7 (903) 345-67-89</div></div></div></td>
@@ -321,6 +335,7 @@
             <td><select class="spec-select" onchange="assignSpec(this)"><option value="">— не назначен —</option></select></td>
             <td><span class="badge badge-new">Новая</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-primary">Взять</button><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-3','Сергей Козлов')">Чат</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
           <tr data-status="active">
             <td><div class="client-cell"><div class="client-ava">МС</div><div><div style="font-weight:600;">Мария Смирнова</div><div style="font-size:12px;color:var(--muted);">+7 (926) 456-78-90</div></div></div></td>
@@ -328,6 +343,7 @@
             <td><select class="spec-select" onchange="assignSpec(this)"><option value="">— не назначен —</option></select></td>
             <td><span class="badge badge-active">В работе</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-4','Мария Смирнова')">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
           <tr data-status="active">
             <td><div class="client-cell"><div class="client-ava">ДВ</div><div><div style="font-weight:600;">Дмитрий Васильев</div><div style="font-size:12px;color:var(--muted);">+7 (985) 567-89-01</div></div></div></td>
@@ -335,6 +351,7 @@
             <td><select class="spec-select" onchange="assignSpec(this)"><option value="">— не назначен —</option></select></td>
             <td><span class="badge badge-active">В работе</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-outline" onclick="openChatPanel('static-5','Дмитрий Васильев')">Чат</button><button class="btn-xs btn-xs-outline">Документы</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
           <tr data-status="done">
             <td><div class="client-cell"><div class="client-ava">ОН</div><div><div style="font-weight:600;">Ольга Новикова</div><div style="font-size:12px;color:var(--muted);">+7 (977) 678-90-12</div></div></div></td>
@@ -342,6 +359,7 @@
             <td><span style="font-size:13px;color:var(--muted);">Анна Петрова</span></td>
             <td><span class="badge badge-done">Завершена</span></td>
             <td><div class="action-btns"><button class="btn-xs btn-xs-outline">История</button></div></td>
+            <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
         </tbody>
       </table>
@@ -1259,6 +1277,7 @@
           </button>
         </div>
       </td>
+      <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
     `;
     tbody.prepend(tr);
     updateFilterCounts();
@@ -1523,6 +1542,7 @@
       <td>${specCell}</td>
       <td>${statusLabel}</td>
       <td><div class="action-btns" id="actions-${reqId}">${actionBtns}</div></td>
+      <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
     `;
     tbody.prepend(tr);
     closeCreateModal();
@@ -1779,6 +1799,41 @@
       Настройки
     </div>
   </nav>
+
+<!-- ── ДИАЛОГ УДАЛЕНИЯ ЗАЯВКИ ── -->
+<div class="del-overlay" id="del-overlay" style="display:none;" onclick="if(event.target===this)cancelDelete()">
+  <div class="del-box">
+    <h3>Удалить заявку?</h3>
+    <p>Вы точно уверены, что хотите удалить эту заявку? Действие нельзя отменить.</p>
+    <div class="del-actions">
+      <button class="del-yes" onclick="doDelete()">Да, удалить</button>
+      <button class="del-no" onclick="cancelDelete()">Нет</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let _deleteTargetRow = null;
+
+  function confirmDelete(btn) {
+    _deleteTargetRow = btn.closest('tr');
+    document.getElementById('del-overlay').style.display = 'flex';
+  }
+
+  function doDelete() {
+    if (_deleteTargetRow) {
+      _deleteTargetRow.remove();
+      _deleteTargetRow = null;
+      updateFilterCounts();
+    }
+    document.getElementById('del-overlay').style.display = 'none';
+  }
+
+  function cancelDelete() {
+    _deleteTargetRow = null;
+    document.getElementById('del-overlay').style.display = 'none';
+  }
+</script>
 
 </body>
 </html>
