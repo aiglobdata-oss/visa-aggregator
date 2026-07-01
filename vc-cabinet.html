@@ -1697,7 +1697,7 @@
       <td>${data.purpose || 'Визовый специалист'}</td>
       <td>${data.time || new Date().toLocaleDateString('ru-RU')}</td>
       <td class="slot-cell">—</td>
-      <td><select class="spec-select" onchange="assignSpec(this)">${buildSpecOptions('')}</select></td>
+      <td class="spec-col spec-cell"><select class="spec-select" onchange="assignSpec(this)">${buildSpecOptions('')}</select></td>
       <td><button class="btn-xs btn-xs-outline" onclick="openChatPanel('${reqId}','${data.client || 'Клиент'}')">Чат</button></td>
       <td>
         <div class="action-btns" id="actions-${reqId}">
@@ -1712,6 +1712,7 @@
       <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
     `;
     tbody.prepend(tr);
+    applyRoleUI();
     updateFilterCounts();
     // Обновляем счётчик в хедере
     const headerBadge = document.querySelector('.cab-stats-pill');
@@ -1979,13 +1980,14 @@
       <td>${visa || '—'}</td>
       <td>${dateStr}</td>
       <td class="slot-cell">—</td>
-      <td>${specCell}</td>
+      <td class="spec-col spec-cell">${specCell}</td>
       <td>${chatBtn}</td>
       <td><div class="action-btns" id="actions-${reqId}">${actionBtns}</div></td>
       <td>${appStatPillHTML(status === 'active' ? 'processing' : status === 'done' ? 'visa_done' : 'new')}</td>
       <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
     `;
     tbody.prepend(tr);
+    applyRoleUI();
     closeCreateModal();
 
     // Очистить форму
