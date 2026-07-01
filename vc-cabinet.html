@@ -866,7 +866,7 @@
         if (d.type === 'client_file') {
           chatMessages[rId].push(d.fileType === 'image'
             ? { from: 'client', type: 'image', src: d.src, name: d.name, time: d.time }
-            : { from: 'client', type: 'file', name: d.name, size: d.size, time: d.time });
+            : { from: 'client', type: 'file', src: d.src, name: d.name, size: d.size, time: d.time });
         } else {
           chatMessages[rId].push({ from: 'client', text: d.text, time: d.time });
         }
@@ -893,11 +893,14 @@
       const isManager = m.from === 'manager';
       let content = '';
       if (m.type === 'image') {
-        content = `<img src="${m.src}" style="max-width:100%;border-radius:8px;display:block;">`;
+        content = m.src
+          ? `<a href="${m.src}" download="${m.name || 'photo.jpg'}" title="Скачать"><img src="${m.src}" style="max-width:100%;border-radius:8px;display:block;cursor:pointer;"></a>`
+          : `<div style="font-size:13px;">🖼 ${m.name || 'Фото'}</div>`;
       } else if (m.type === 'file') {
+        const dlBtn = m.src ? `<a href="${m.src}" download="${m.name}" style="font-size:11px;color:${isManager ? '#c7d2fe' : 'var(--indigo)'};text-decoration:underline;cursor:pointer;">Скачать</a>` : '';
         content = `<div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.08);border-radius:8px;padding:8px 10px;">
           <span style="font-size:20px;">📄</span>
-          <div><div style="font-size:13px;font-weight:600;">${m.name}</div><div style="font-size:11px;opacity:0.7;">${m.size}</div></div>
+          <div><div style="font-size:13px;font-weight:600;">${m.name}</div><div style="font-size:11px;opacity:0.7;">${m.size}</div>${dlBtn}</div>
         </div>`;
       } else {
         content = `<div>${m.text}</div>`;
@@ -993,6 +996,10 @@
     if (!chatMessages[activeChatReqId]) chatMessages[activeChatReqId] = [];
     chatMessages[activeChatReqId].push({ from: 'manager', type: data.type, src: data.src, name: data.name, size: data.size, time });
     renderChatMessages(activeChatReqId);
+    vsDb.ref('vs_chat/' + activeChatReqId).push({
+      type: 'manager_file', fileType: data.type, src: data.src || '', name: data.name, size: data.size || '',
+      time, reqId: activeChatReqId, _ts: Date.now()
+    });
   }
 
   function attachFile(input, type) {
@@ -1010,7 +1017,12 @@
       };
       reader.readAsDataURL(file);
     } else {
-      showManagerFilePreview({ type: 'file', name: file.name, size: Math.round(file.size/1024) + ' КБ' });
+      if (file.size > 2 * 1024 * 1024) { alert('Файл слишком большой (макс. 2 МБ)'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        showManagerFilePreview({ type: 'file', src: e.target.result, name: file.name, size: Math.round(file.size/1024) + ' КБ' });
+      };
+      reader.readAsDataURL(file);
     }
   }
 

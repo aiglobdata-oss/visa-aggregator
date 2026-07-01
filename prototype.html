@@ -911,6 +911,9 @@
       if (d.type === 'manager_message') {
         addSpecialistMsg(d.text);
       }
+      if (d.type === 'manager_file') {
+        addSpecialistFile(d);
+      }
     });
   }
 
@@ -1822,6 +1825,32 @@
     } catch(e){}
   }
 
+  function addSpecialistFile(d) {
+    const body = document.getElementById('chat-body');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.style.cssText = 'border-left:3px solid var(--indigo);background:#eef2ff;';
+    let inner = '<div style="font-size:10px;font-weight:700;color:var(--indigo);margin-bottom:4px;text-transform:uppercase;">Визовый специалист</div>';
+    if (d.fileType === 'image' && d.src) {
+      inner += `<a href="${d.src}" download="${d.name || 'photo.jpg'}"><img src="${d.src}" style="max-width:100%;border-radius:8px;display:block;cursor:pointer;"></a>`;
+    } else {
+      const dlLink = d.src ? `<a href="${d.src}" download="${d.name}" style="color:var(--indigo);font-size:12px;text-decoration:underline;">Скачать</a>` : '';
+      inner += `<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:22px;">📄</span><div><div style="font-weight:600;font-size:13px;">${d.name || 'Документ'}</div><div style="font-size:11px;color:#6b7280;">${d.size || ''}</div>${dlLink}</div></div>`;
+    }
+    div.innerHTML = inner;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    try {
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=880;
+      g.gain.setValueAtTime(0.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.6);
+      o.start(); o.stop(ctx.currentTime+0.6);
+    } catch(e){}
+  }
+
   // Listener: сообщения от менеджера — через Firebase (см. startClientChatListener)
 
   // Перехватываем input в чате → отправляем менеджеру
@@ -2081,8 +2110,13 @@
       };
       reader.readAsDataURL(file);
     } else {
+      if (file.size > 2 * 1024 * 1024) { alert('Файл слишком большой (макс. 2 МБ)'); return; }
       const sizeKb = Math.round(file.size / 1024) + ' КБ';
-      showFilePreview({ type: 'doc', name: file.name, size: sizeKb });
+      const reader = new FileReader();
+      reader.onload = e => {
+        showFilePreview({ type: 'doc', src: e.target.result, name: file.name, size: sizeKb });
+      };
+      reader.readAsDataURL(file);
     }
   });
   // chat mic
