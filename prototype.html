@@ -894,12 +894,14 @@
   const vsDb = firebase.database();
   let _chatFbListener = null;
 
-  function startClientChatListener(reqId) {
+  function startClientChatListener(reqId, restoreMode) {
     if (_chatFbListener) return;
-    const startTs = Date.now();
+    const startTs = restoreMode ? 0 : Date.now();
+    sessionStorage.setItem('vs_chat_reqId', reqId);
     _chatFbListener = vsDb.ref('vs_chat/' + reqId).on('child_added', snap => {
       const d = snap.val();
-      if (!d || d._ts < startTs) return;
+      if (!d) return;
+      if (!restoreMode && d._ts < startTs) return;
       if (d.type === 'specialist_joined') {
         addBotMsg('🤝 Визовый специалист подключился и готов помочь!');
         feedbackShown = false;
@@ -911,6 +913,16 @@
       }
     });
   }
+
+  // Восстановление чата после перезагрузки
+  (function restoreChatSession() {
+    const savedReqId = sessionStorage.getItem('vs_chat_reqId');
+    if (savedReqId) {
+      window._chatReqId = savedReqId;
+      window._chatClientName = sessionStorage.getItem('vs_chat_clientName') || 'Клиент';
+      startClientChatListener(savedReqId, true);
+    }
+  })();
 
   // mode: 'slot' = выбрал страну, потом 8 Q; 'visa' = сразу 8 Q (Q2 = страна текстом)
   const urlParams = new URLSearchParams(window.location.search);
@@ -1599,6 +1611,7 @@
         if (!window._chatClientName) {
           window._chatClientName = (state.answers && state.answers[0]) || 'Клиент';
         }
+        sessionStorage.setItem('vs_chat_clientName', window._chatClientName);
         vsDb.ref('vs_notifications').push({
           type: 'new_request',
           reqId,
