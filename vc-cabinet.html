@@ -301,6 +301,10 @@
     /* Корзина (col 8): поверх справа */
     .app-table td:nth-child(8) { display: inline-block !important; position: absolute; top: 14px; right: 14px; }
 
+    /* ── Слоты: баланс рядом с заголовком на мобайле ── */
+    .slot-balance-mobile { display: inline-block !important; }
+    .slot-balance-desktop { display: none !important; }
+
     /* ── Слоты: 2 колонки ── */
     .slots-grid { grid-template-columns: 1fr 1fr; }
 
@@ -483,11 +487,14 @@
     <div class="section" id="section-slots">
       <div class="section-header">
         <div>
-          <div class="section-title">Слоты</div>
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+            <div class="section-title">Слоты</div>
+            <div class="slot-balance-mobile" style="display:none;font-size:18px;font-weight:700;color:#1a73e8;"><span id="slot-balance-m">15 000 ₽</span></div>
+          </div>
           <div class="section-sub">Управление записями в консульства</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="font-size:14px;color:var(--text);font-weight:600;">Баланс: <span id="slot-balance" style="color:#1a73e8;">15 000 ₽</span></div>
+          <div class="slot-balance-desktop" style="font-size:14px;color:var(--text);font-weight:600;">Баланс: <span id="slot-balance" style="color:#1a73e8;">15 000 ₽</span></div>
           <button class="btn-main" style="background:#f5a623;border-color:#f5a623;" onclick="openBuySlots()">Купить</button>
           <button class="btn-main" onclick="openAddSlot()">+ Добавить слот</button>
         </div>
@@ -2885,7 +2892,10 @@
     const bal = document.getElementById('slot-balance');
     const cur = parseInt((bal.textContent || '0').replace(/\D/g, ''), 10) || 0;
     const next = Math.max(0, cur + delta);
-    bal.textContent = next.toLocaleString('ru-RU') + ' ₽';
+    const txt = next.toLocaleString('ru-RU') + ' ₽';
+    bal.textContent = txt;
+    const balM = document.getElementById('slot-balance-m');
+    if (balM) balM.textContent = txt;
   }
 
   function openAddSlot() {
