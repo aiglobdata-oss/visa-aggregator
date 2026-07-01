@@ -487,9 +487,9 @@
     <div class="section" id="section-slots">
       <div class="section-header">
         <div>
-          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;">
             <div class="section-title">Слоты</div>
-            <div class="slot-balance-mobile" style="display:none;font-size:18px;font-weight:700;color:#1a73e8;"><span id="slot-balance-m">15 000 ₽</span></div>
+            <div class="slot-balance-mobile" style="display:none;font-size:14px;font-weight:600;color:var(--text);">Баланс: <span id="slot-balance-m" style="font-weight:700;color:#1a73e8;">15 000 ₽</span></div>
           </div>
           <div class="section-sub">Управление записями в консульства</div>
         </div>
@@ -2268,7 +2268,7 @@
       </div>
     </div>
 
-    <button onclick="processBuySlots()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#1a73e8;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:20px;">Оплатить</button>
+    <button id="btn-pay" onclick="processBuySlots()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#1a73e8;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:20px;">Оплатить</button>
 
     <div style="border-top:1px solid var(--border);padding-top:18px;">
       <p style="font-size:16px;font-weight:700;margin:0 0 4px;">Подписка на слоты</p>
@@ -2277,27 +2277,29 @@
         <div class="sub-tier" data-tier="start" data-amount="50000" style="border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;" onclick="selectSubscription('start',this)">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:14px;font-weight:600;">Старт</span>
-            <span style="font-size:14px;font-weight:700;color:#1a73e8;">50 000 ₽/мес</span>
+            <span class="sub-tier-price" style="font-size:14px;font-weight:700;color:#1a73e8;">50 000 ₽/мес</span>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px;">10 записей в месяц</div>
+          <div class="sub-tier-desc" style="font-size:12px;color:var(--muted);margin-top:4px;">10 записей в месяц</div>
+          <div class="sub-tier-done" style="display:none;margin-top:8px;padding:8px 0;text-align:center;font-size:13px;font-weight:600;color:#2e7d32;background:#e8f5e9;border-radius:8px;"></div>
         </div>
-        <div class="sub-tier" data-tier="business" data-amount="225000" style="border:1.5px solid #1a73e8;border-radius:12px;padding:14px 16px;cursor:pointer;position:relative;background:#f0f6ff;transition:all .15s;" onclick="selectSubscription('business',this)">
+        <div class="sub-tier" data-tier="business" data-amount="225000" style="border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;position:relative;transition:all .15s;" onclick="selectSubscription('business',this)">
           <div style="position:absolute;top:-8px;right:12px;background:#1a73e8;color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;">Рекомендуем</div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:14px;font-weight:600;">Бизнес</span>
-            <span style="font-size:14px;font-weight:700;color:#1a73e8;">225 000 ₽/мес</span>
+            <span class="sub-tier-price" style="font-size:14px;font-weight:700;color:#1a73e8;">225 000 ₽/мес</span>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px;">50 записей в месяц</div>
+          <div class="sub-tier-desc" style="font-size:12px;color:var(--muted);margin-top:4px;">50 записей в месяц</div>
+          <div class="sub-tier-done" style="display:none;margin-top:8px;padding:8px 0;text-align:center;font-size:13px;font-weight:600;color:#2e7d32;background:#e8f5e9;border-radius:8px;"></div>
         </div>
         <div class="sub-tier" data-tier="premium" data-amount="400000" style="border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;" onclick="selectSubscription('premium',this)">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:14px;font-weight:600;">Премиум</span>
-            <span style="font-size:14px;font-weight:700;color:#1a73e8;">400 000 ₽/мес</span>
+            <span class="sub-tier-price" style="font-size:14px;font-weight:700;color:#1a73e8;">400 000 ₽/мес</span>
           </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px;">100 записей в месяц</div>
+          <div class="sub-tier-desc" style="font-size:12px;color:var(--muted);margin-top:4px;">100 записей в месяц</div>
+          <div class="sub-tier-done" style="display:none;margin-top:8px;padding:8px 0;text-align:center;font-size:13px;font-weight:600;color:#2e7d32;background:#e8f5e9;border-radius:8px;"></div>
         </div>
       </div>
-      <button id="btn-subscribe" onclick="confirmSubscription()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#34a853;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px;display:none;">Подписаться</button>
     </div>
   </div>
 </div>
@@ -2834,19 +2836,17 @@
     document.getElementById('buy-qty').textContent = '1';
     document.getElementById('buy-total').textContent = '5 000 ₽';
     _selectedTier = null;
-    const btnSub = document.getElementById('btn-subscribe');
-    btnSub.style.display = 'none';
-    btnSub.style.background = '#34a853';
-    btnSub.textContent = 'Подписаться';
+    _selectedTierEl = null;
+    document.getElementById('btn-pay').textContent = 'Оплатить';
     document.querySelectorAll('#sub-tiers .sub-tier').forEach(t => {
       t.style.borderColor = 'var(--border)';
       t.style.background = '';
+      t.style.cursor = 'pointer';
+      const done = t.querySelector('.sub-tier-done');
+      if (done) done.style.display = 'none';
     });
-    const biz = document.querySelector('.sub-tier[data-tier="business"]');
-    if (biz) { biz.style.borderColor = '#1a73e8'; biz.style.background = '#f0f6ff'; }
     const ov = document.getElementById('buy-slots-overlay');
     ov.style.display = 'flex';
-    ov.onclick = function(e) { if (e.target === ov) closeBuySlots(); };
   }
   function closeBuySlots() {
     document.getElementById('buy-slots-overlay').style.display = 'none';
@@ -2860,33 +2860,39 @@
     document.querySelectorAll('#pay-methods label').forEach(l => l.style.borderColor = 'var(--border)');
     label.style.borderColor = '#1a73e8';
   }
-  function processBuySlots() {
-    updateBalance(_buyQty * 5000);
-    closeBuySlots();
-  }
   let _selectedTier = null;
+  let _selectedTierEl = null;
+  function processBuySlots() {
+    if (_selectedTier) {
+      const amounts = { start: 50000, business: 225000, premium: 400000 };
+      const names = { start: 'Старт', business: 'Бизнес', premium: 'Премиум' };
+      updateBalance(amounts[_selectedTier] || 0);
+      const done = _selectedTierEl.querySelector('.sub-tier-done');
+      if (done) {
+        done.textContent = 'Подписка «' + names[_selectedTier] + '» оформлена!';
+        done.style.display = '';
+      }
+      _selectedTierEl.style.cursor = 'default';
+      _selectedTierEl.onclick = null;
+      _selectedTier = null;
+      _selectedTierEl = null;
+      document.getElementById('btn-pay').textContent = 'Оплатить';
+    } else {
+      updateBalance(_buyQty * 5000);
+      closeBuySlots();
+    }
+  }
   function selectSubscription(tier, el) {
     _selectedTier = tier;
+    _selectedTierEl = el;
     document.querySelectorAll('#sub-tiers .sub-tier').forEach(t => {
       t.style.borderColor = 'var(--border)';
       t.style.background = '';
     });
     el.style.borderColor = '#1a73e8';
     el.style.background = '#f0f6ff';
-    document.getElementById('btn-subscribe').style.display = '';
     const names = { start: 'Старт — 50 000 ₽', business: 'Бизнес — 225 000 ₽', premium: 'Премиум — 400 000 ₽' };
-    document.getElementById('btn-subscribe').textContent = 'Подписаться: ' + names[tier];
-  }
-  function confirmSubscription() {
-    if (!_selectedTier) return;
-    const amounts = { start: 50000, business: 225000, premium: 400000 };
-    const add = amounts[_selectedTier] || 0;
-    updateBalance(add);
-    const names = { start: 'Старт', business: 'Бизнес', premium: 'Премиум' };
-    const btn = document.getElementById('btn-subscribe');
-    btn.textContent = 'Подписка «' + names[_selectedTier] + '» оформлена!';
-    btn.style.background = '#2e7d32';
-    setTimeout(() => closeBuySlots(), 1200);
+    document.getElementById('btn-pay').textContent = 'Оплатить подписку: ' + names[tier];
   }
   function updateBalance(delta) {
     const bal = document.getElementById('slot-balance');
