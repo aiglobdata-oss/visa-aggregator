@@ -893,13 +893,23 @@
   });
   const vsDb = firebase.database();
   let _chatFbListener = null;
+  let _chatFbRef = null;
+
+  function stopClientChatListener() {
+    if (_chatFbRef && _chatFbListener) {
+      _chatFbRef.off('child_added', _chatFbListener);
+    }
+    _chatFbListener = null;
+    _chatFbRef = null;
+  }
 
   function startClientChatListener(reqId, restoreMode) {
-    if (_chatFbListener) return;
+    if (_chatFbListener) stopClientChatListener();
     const startTs = restoreMode ? 0 : Date.now();
     sessionStorage.setItem('vs_chat_reqId', reqId);
     const seenKeys = new Set();
-    _chatFbListener = vsDb.ref('vs_chat/' + reqId).on('child_added', snap => {
+    _chatFbRef = vsDb.ref('vs_chat/' + reqId);
+    _chatFbListener = _chatFbRef.on('child_added', snap => {
       const d = snap.val();
       if (!d) return;
       const key = snap.key;
