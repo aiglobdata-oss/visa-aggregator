@@ -1613,6 +1613,7 @@
           qa,
           _ts: Date.now(),
         });
+        window._chatOriginalQa = qa;
         startClientChatListener(reqId);
       } catch(e) {}
       setTimeout(() => {
@@ -1865,17 +1866,21 @@
     setTimeout(() => addBotMsg('Ожидайте — первый свободный специалист подключится к вам.'), 1500);
     // Уведомляем текущий ВЦ о дизлайке — они блокируют клиента на день
     vsDb.ref('vs_notifications').push({ type: 'dislike_notice', reqId: window._chatReqId || '', _ts: Date.now() });
-    // Переназначить клиента другому визовому центру
+    // Переназначить клиента другому визовому центру — сохраняем анкету
+    const origQa = (window._chatOriginalQa && window._chatOriginalQa.length) ? window._chatOriginalQa : questions.map((q, i) => ({ q: q.text, a: state.answers[i] || '—' }));
+    const origCountryQ = questions.find(q => /страна|country/i.test(q.text));
+    const origCountry = origCountryQ ? (state.answers[questions.indexOf(origCountryQ)] || '—') : '—';
     vsDb.ref('vs_notifications').push({
       type: 'reassign_request',
-      reqId: window._chatReqId || ('req_' + Date.now()),
+      reqId: 'req_' + Date.now(),
       client: window._chatClientName || 'Клиент',
-      country: '',
+      clientPhone: window._chatClientPhone || '',
+      country: origCountry,
       purpose: 'Переназначение — клиент недоволен специалистом',
-      biometrics: false,
-      slotMode: false,
+      biometrics: state.biometrics || false,
+      slotMode: state.mode === 'slot',
       time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
-      qa: [],
+      qa: origQa,
       isReassign: true,
       _ts: Date.now(),
     });

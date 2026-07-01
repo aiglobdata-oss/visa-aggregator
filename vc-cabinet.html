@@ -1690,6 +1690,7 @@
       <td>${data.purpose || 'Визовый специалист'}</td>
       <td>${data.time || new Date().toLocaleDateString('ru-RU')}</td>
       <td class="slot-cell">—</td>
+      <td><select class="spec-select" onchange="assignSpec(this)">${buildSpecOptions('')}</select></td>
       <td><button class="btn-xs btn-xs-outline" onclick="openChatPanel('${reqId}','${data.client || 'Клиент'}')">Чат</button></td>
       <td>
         <div class="action-btns" id="actions-${reqId}">
