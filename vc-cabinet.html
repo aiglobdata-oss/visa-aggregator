@@ -2837,6 +2837,7 @@
     const btnPay = document.getElementById('btn-pay');
     btnPay.textContent = 'Оплатить';
     btnPay.style.pointerEvents = '';
+    btnPay.style.background = '#1a73e8';
     document.querySelectorAll('#sub-tiers .sub-tier').forEach(t => {
       t.style.borderColor = 'var(--border)';
       t.style.background = '';
@@ -2874,6 +2875,7 @@
       updateBalance(amounts[_selectedTier] || 0);
       const btn = document.getElementById('btn-pay');
       btn.textContent = 'Подписка «' + names[_selectedTier] + '» оформлена!';
+      btn.style.background = '#1b5e20';
       btn.style.pointerEvents = 'none';
       _selectedTier = null;
       _selectedTierEl = null;
