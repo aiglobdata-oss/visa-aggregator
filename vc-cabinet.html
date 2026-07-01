@@ -1300,10 +1300,15 @@
     const rect = pill.getBoundingClientRect();
     drop.style.display = 'block';
     const dropW = 210;
+    const dropH = drop.offsetHeight;
     let left = rect.left;
     if (left + dropW > window.innerWidth - 8) left = window.innerWidth - dropW - 8;
     drop.style.left = left + 'px';
-    drop.style.top  = (rect.bottom + 4) + 'px';
+    if (rect.bottom + dropH + 8 > window.innerHeight) {
+      drop.style.top = (rect.top - dropH - 4) + 'px';
+    } else {
+      drop.style.top = (rect.bottom + 4) + 'px';
+    }
   }
 
   function setAppStatus(key) {
