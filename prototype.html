@@ -2089,8 +2089,8 @@
     body.scrollTop = body.scrollHeight;
     if (window._chatReqId) {
       vsDb.ref('vs_chat/' + window._chatReqId).push({
-        type: 'client_file', fileType: data.type, src: data.src, name: data.name, size: data.size,
-        time, reqId: window._chatReqId, clientName: window._chatClientName, _ts: Date.now(),
+        type: 'client_file', fileType: data.type, src: data.src || '', name: data.name || '', size: data.size || '',
+        time, reqId: window._chatReqId, clientName: window._chatClientName || '', _ts: Date.now(),
       });
     }
   }
