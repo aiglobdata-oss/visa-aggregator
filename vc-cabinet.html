@@ -2855,6 +2855,15 @@
     _buyQty = Math.max(1, _buyQty + d);
     document.getElementById('buy-qty').textContent = _buyQty;
     document.getElementById('buy-total').textContent = (_buyQty * 5000).toLocaleString('ru-RU') + ' ₽';
+    if (_selectedTier) {
+      _selectedTier = null;
+      _selectedTierEl = null;
+      document.getElementById('btn-pay').textContent = 'Оплатить';
+      document.querySelectorAll('#sub-tiers .sub-tier').forEach(t => {
+        t.style.borderColor = 'var(--border)';
+        t.style.background = '';
+      });
+    }
   }
   function selectPayMethod(label) {
     document.querySelectorAll('#pay-methods label').forEach(l => l.style.borderColor = 'var(--border)');
