@@ -105,6 +105,7 @@
   .client-ava { width: 32px; height: 32px; border-radius: 50%; background: var(--indigo-light); color: var(--indigo); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
   .action-btns { display: flex; gap: 6px; }
+  .docs-cell { text-align: center; }
   .btn-xs { padding: 5px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all .15s; white-space: nowrap; }
   .btn-xs-primary { background: var(--indigo); color: #fff; }
   .btn-xs-primary:hover { background: var(--indigo-dark); }
@@ -464,7 +465,7 @@
             <td class="spec-col spec-cell"><select class="spec-select" onchange="assignSpec(this)"><option value="">— Не назначен</option></select></td>
             <td><button class="btn-xs btn-xs-outline chat-btn" disabled onclick="openChatPanel('static-1','Иван Иванов')">Чат</button></td>
             <td><div class="action-btns" id="actions-static-1"><button onclick="takeRequest('static-1')" class="btn-xs btn-xs-primary">Взять</button></div></td>
-            <td class="docs-cell"></td>
+            <td class="docs-cell"><button class="btn-xs btn-xs-outline" disabled>Документы</button></td>
             <td><span id="stat-cell-s1"></span></td>
             <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
@@ -474,7 +475,7 @@
             <td class="spec-col spec-cell"><select class="spec-select" onchange="assignSpec(this)"><option value="">— Не назначен</option></select></td>
             <td><button class="btn-xs btn-xs-outline chat-btn" disabled onclick="openChatPanel('static-2','Анна Петрова')">Чат</button></td>
             <td><div class="action-btns" id="actions-static-2"><button onclick="takeRequest('static-2')" class="btn-xs btn-xs-primary">Взять</button></div></td>
-            <td class="docs-cell"></td>
+            <td class="docs-cell"><button class="btn-xs btn-xs-outline" disabled>Документы</button></td>
             <td><span id="stat-cell-s2"></span></td>
             <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
@@ -484,7 +485,7 @@
             <td class="spec-col spec-cell"><select class="spec-select" onchange="assignSpec(this)"><option value="">— Не назначен</option></select></td>
             <td><button class="btn-xs btn-xs-outline chat-btn" disabled onclick="openChatPanel('static-3','Сергей Козлов')">Чат</button></td>
             <td><div class="action-btns" id="actions-static-3"><button onclick="takeRequest('static-3')" class="btn-xs btn-xs-primary">Взять</button></div></td>
-            <td class="docs-cell"></td>
+            <td class="docs-cell"><button class="btn-xs btn-xs-outline" disabled>Документы</button></td>
             <td><span id="stat-cell-s3"></span></td>
             <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
           </tr>
@@ -1721,7 +1722,7 @@
           </button>
         </div>
       </td>
-      <td class="docs-cell"></td>
+      <td class="docs-cell"><button class="btn-xs btn-xs-outline" disabled>Документы</button></td>
       <td>${appStatPillHTML('new')}</td>
       <td><button class="trash-btn" onclick="confirmDelete(this)">🗑</button></td>
     `;
@@ -1973,7 +1974,7 @@
       : status === 'active'
       ? `<button onclick="openQaModal('${reqId}')" class="btn-xs btn-xs-outline">Анкета</button>`
       : `<button class="btn-xs btn-xs-outline">История</button>`;
-    const docsCell = status === 'new' ? '' : '<button class="btn-xs btn-xs-outline">Документы</button>';
+    const docsCell = status === 'new' ? '<button class="btn-xs btn-xs-outline" disabled>Документы</button>' : '<button class="btn-xs btn-xs-outline">Документы</button>';
 
     const specCell = status === 'done'
       ? `<span style="font-size:13px;color:var(--muted);">${spec || '—'}</span>`
