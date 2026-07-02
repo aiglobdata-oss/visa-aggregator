@@ -133,7 +133,7 @@
 
   /* ── SLOTS ── */
   .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  .slot-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .slot-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; }
   /* FLAGS */
   .flag { width: 32px; height: 22px; border-radius: 4px; flex-shrink: 0; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.18); display: inline-block; }
   .flag-lg { width: 56px; height: 38px; border-radius: 6px; }
@@ -149,7 +149,8 @@
   .spec-select:focus { outline:none; border-color:var(--indigo); }
   .slot-free { color: var(--green); }
   .slot-taken { color: var(--muted); }
-  .btn-slot { width: 100%; margin-top: 12px; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all .15s; color: #fff; }
+  .btn-slot { width: 100%; margin-top: auto; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all .15s; color: #fff; }
+  .slot-status { margin-top: 8px; margin-bottom: 12px; }
   .btn-slot-free { background: var(--green); }
   .btn-slot-free:hover { background: #15803d; }
   .btn-slot-taken { background: var(--muted); }
@@ -313,7 +314,7 @@
     .app-table td:nth-child(8) .action-btns { flex-wrap: nowrap; gap: 8px; }
     .app-table td:nth-child(8) .btn-xs { width: 100%; height: 36px; justify-content: center; padding: 8px 10px; font-size: 13px; box-sizing: border-box; white-space: nowrap; }
     .app-table td:nth-child(10) { flex: 1 1 auto; width: auto; margin-bottom: 10px !important; }
-    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; white-space: nowrap; }
+    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: center; gap: 6px; height: 36px; align-items: center; border-radius: 8px; white-space: nowrap; }
 
     /* Ряд 3: Документы на всю ширину (в референсе их не было — оставляем снизу) */
     .app-table td:nth-child(9) { order: 12; margin-bottom: 0 !important; }
