@@ -960,7 +960,7 @@
   // mode: 'slot' = выбрал страну, потом 8 Q; 'visa' = сразу 8 Q (Q2 = страна текстом)
   const urlParams = new URLSearchParams(window.location.search);
   const _m = urlParams.get('mode');
-  const initialMode = _m === 'visa' ? 'visa' : _m === 'vc' ? 'vc' : 'slot';
+  const initialMode = _m === 'visa' ? 'visa' : _m === 'vc' ? 'vc' : _m === 'ates' ? 'ates' : 'slot';
 
   // Читаем зарегистрированного пользователя из кабинета
   let _cabinetUser = null;
@@ -1821,6 +1821,41 @@
     }, 500);
   }
 
+  // ates-mode: карта АТЭС — без опросника, сразу чат + заявка в кабинет ВЦ
+  function initAtesChat() {
+    const body = document.getElementById('chat-body');
+    body.innerHTML = '';
+    renderSideBtns();
+    // Отправляем заявку на карту АТЭС в кабинет ВЦ
+    try {
+      const reqId = 'req_' + Date.now();
+      window._chatReqId = reqId;
+      if (!window._chatClientName) window._chatClientName = 'Клиент';
+      sessionStorage.setItem('vs_chat_clientName', window._chatClientName);
+      vsDb.ref('vs_notifications').push({
+        type: 'new_request',
+        reqId,
+        client: window._chatClientName,
+        clientPhone: window._chatClientPhone || '',
+        fromCabinet: !!_cabinetUser,
+        country: 'Карта АТЭС',
+        purpose: 'Оформление карты АТЭС (APEC)',
+        service: 'ates',
+        biometrics: false,
+        slotMode: false,
+        time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'}),
+        qa: [],
+        _ts: Date.now(),
+      });
+      window._chatOriginalQa = [];
+      startClientChatListener(reqId);
+    } catch(e) {}
+    setTimeout(() => {
+      addBotMsg('Здравствуйте! 👋 Вы оставили заявку на оформление <b>карты АТЭС</b> (APEC Business Travel Card).');
+      setTimeout(() => addBotMsg('Подключаю специалиста визового центра — он ответит на ваши вопросы и поможет оформить карту. 🤝'), 1300);
+    }, 400);
+  }
+
   function getFirstName() {
     const name = state.answers[0] || '';
     const parts = name.split(/\s+/).filter(Boolean);
@@ -2174,7 +2209,11 @@
 
   // Стартовая инициализация — экран зависит от mode
   function initialShow() {
-    if (state.mode === 'slot') {
+    if (state.mode === 'ates') {
+      // Карта АТЭС: без опросника — сразу чат
+      showScreen(7);
+      initAtesChat();
+    } else if (state.mode === 'slot') {
       // Сначала выбор страны
       showScreen(1);
     } else {

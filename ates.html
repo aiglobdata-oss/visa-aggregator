@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта АТЭС (APEC Business Travel Card) — VisaSlot</title>
+<style>
+  :root {
+    --indigo: #4f46e5;
+    --blue: #1e40af;
+    --blue-dark: #0e2a6b;
+    --cyan: #0891b2;
+    --ink: #0f1729;
+    --muted: #5b6478;
+    --line: #e6e8ee;
+    --bg-soft: #f7f8fb;
+    --amber: #f59e0b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); background: #fff; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 22px; }
+  a { color: inherit; }
+
+  /* HEADER */
+  header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 19px; text-decoration: none; }
+  .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--indigo); }
+  .back-link { font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; }
+  .back-link:hover { color: var(--ink); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; text-decoration: none; font-family: inherit; font-weight: 700; font-size: 16px; border-radius: 14px; padding: 15px 30px; line-height: 1; transition: transform .12s ease, box-shadow .12s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-buy { background: linear-gradient(135deg, var(--amber), #d97706); color: #fff; box-shadow: 0 10px 28px rgba(217,119,6,0.35); }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 55%, var(--cyan) 150%); color: #fff; padding: 46px 0 52px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; right: -100px; top: -80px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; position: relative; z-index: 1; }
+  .hero .eyebrow { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #dbeafe; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; margin-bottom: 16px; }
+  .hero h1 { font-size: 40px; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .hero h1 span { display: block; font-size: 16px; font-weight: 600; color: #bfdbfe; letter-spacing: 0; margin-top: 6px; }
+  .hero p.lead { font-size: 17px; color: #e0e7ff; margin: 16px 0 26px; max-width: 540px; }
+  .hero-cta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .hero-price { display: flex; flex-direction: column; line-height: 1.1; }
+  .hero-price small { font-size: 12px; color: #bfdbfe; text-transform: uppercase; letter-spacing: 0.05em; }
+  .hero-price b { font-size: 24px; font-weight: 800; }
+
+  /* card mock */
+  .card-mock { width: 100%; max-width: 320px; aspect-ratio: 1.586; border-radius: 18px; margin: 0 auto; background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%); color: var(--blue-dark); box-shadow: 0 24px 55px rgba(0,0,0,0.4); transform: rotate(-4deg); padding: 22px 24px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,0.6); }
+  .card-mock .apec-row { display: flex; align-items: center; justify-content: space-between; }
+  .card-mock .apec-logo { font-size: 26px; font-weight: 900; letter-spacing: 1px; color: #1e3a8a; }
+  .card-mock .apec-sub { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: #2563eb; text-transform: uppercase; }
+  .card-mock .apec-chip { width: 46px; height: 34px; border-radius: 7px; background: linear-gradient(135deg, #fcd34d, #f59e0b); }
+  .card-mock .apec-flag { font-size: 26px; }
+  .card-mock .apec-valid { font-size: 10px; color: #475569; letter-spacing: 0.5px; font-weight: 600; }
+
+  /* SECTIONS */
+  section.block { padding: 56px 0; }
+  section.block.soft { background: var(--bg-soft); }
+  .sec-head { text-align: center; max-width: 640px; margin: 0 auto 34px; }
+  .sec-head h2 { font-size: 30px; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 10px; }
+  .sec-head p { font-size: 16px; color: var(--muted); }
+
+  /* advantages */
+  .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .adv-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: 0 2px 10px rgba(15,23,41,0.04); }
+  .adv-card .ico { font-size: 26px; margin-bottom: 10px; }
+  .adv-card h3 { font-size: 16px; margin-bottom: 6px; }
+  .adv-card p { font-size: 14px; color: var(--muted); }
+
+  /* countries */
+  .country-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .country-item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; font-size: 15px; font-weight: 500; }
+  .country-item .fl { font-size: 20px; }
+
+  /* tariffs */
+  .tariffs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .tariff { display: flex; flex-direction: column; border: 1.5px solid var(--line); border-radius: 18px; padding: 24px; background: #fff; }
+  .tariff.featured { border-color: var(--blue); box-shadow: 0 12px 30px rgba(30,64,175,0.14); }
+  .tariff .t-badge { display: inline-block; align-self: flex-start; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+  .tariff.std .t-badge { background: #dbeafe; color: var(--blue); }
+  .tariff.biz .t-badge { background: #ede9fe; color: #6d28d9; }
+  .tariff.exp .t-badge { background: #ffedd5; color: #c2410c; }
+  .tariff h3 { font-size: 20px; margin-bottom: 4px; }
+  .tariff .t-price { font-size: 26px; font-weight: 800; margin: 8px 0 14px; }
+  .tariff .t-price small { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .tariff ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+  .tariff li { font-size: 14px; padding-left: 22px; position: relative; color: #334155; }
+  .tariff li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); font-weight: 800; }
+  .tariff .btn-buy { margin-top: auto; width: 100%; font-size: 15px; padding: 13px; }
+
+  /* requirements */
+  .req-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .req-item { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .req-item .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .req-item p { font-size: 15px; color: #334155; }
+
+  /* final cta */
+  .final { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: #fff; border-radius: 26px; padding: 48px 32px; text-align: center; }
+  .final h2 { font-size: 30px; margin-bottom: 10px; letter-spacing: -0.02em; }
+  .final p { font-size: 17px; opacity: 0.9; max-width: 520px; margin: 0 auto 26px; }
+
+  footer { padding: 34px 0; border-top: 1px solid var(--line); margin-top: 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* DEMO MODAL (чат-прототип) */
+  .demo-overlay { position: fixed; inset: 0; background: rgba(5,8,20,0.72); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 1200; padding: 20px; }
+  .demo-overlay.open { display: flex; }
+  .demo-window { position: relative; width: 100%; max-width: 400px; height: 88vh; max-height: 820px; background: #000; border-radius: 32px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+  .demo-iframe { width: 100%; height: 100%; border: none; background: #fff; }
+  .demo-close { position: absolute; top: 12px; right: 12px; z-index: 5; width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); color: #111; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+  @media (max-width: 820px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 26px; text-align: center; }
+    .hero h1 { font-size: 31px; }
+    .hero p.lead { margin-left: auto; margin-right: auto; }
+    .hero-cta { justify-content: center; }
+    .hero-visual { order: -1; }
+    .adv-grid, .tariffs { grid-template-columns: 1fr; }
+    .country-grid { grid-template-columns: repeat(2, 1fr); }
+    .sec-head h2 { font-size: 25px; }
+  }
+  @media (max-width: 440px) {
+    .country-grid { grid-template-columns: 1fr; }
+    .hero-cta .btn { width: 100%; }
+    .card-mock { max-width: 270px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="landing.html" class="logo"><span class="dot"></span>VisaSlot</a>
+    <a href="landing.html#ates" class="back-link">← Назад</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">✈️ Виза не нужна · 18 стран Азии и АТР</span>
+      <h1>Карта АТЭС<span>APEC Business Travel Card</span></h1>
+      <p class="lead">Международный визозаменяющий документ, дающий право безвизового многократного въезда в 18 стран Азиатско-Тихоокеанского региона в течение 5 лет. Оформление полностью дистанционно — без визитов в посольства и консульства.</p>
+      <div class="hero-cta">
+        <div class="hero-price"><small>тарифы</small><b>от 70 000 ₽</b></div>
+        <button class="btn btn-buy" onclick="openAtes()">Купить карту АТЭС →</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="card-mock">
+        <div class="apec-row">
+          <div>
+            <div class="apec-logo">APEC</div>
+            <div class="apec-sub">Business Travel Card</div>
+          </div>
+          <div class="apec-flag">🇷🇺</div>
+        </div>
+        <div class="apec-chip"></div>
+        <div class="apec-row">
+          <div class="apec-valid">VALID FOR 5 YEARS</div>
+          <div class="apec-valid">18 COUNTRIES</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVANTAGES -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Преимущества карты</h2>
+      <p>Один документ вместо десятков виз на 5 лет вперёд</p>
+    </div>
+    <div class="adv-grid">
+      <div class="adv-card"><div class="ico">🌏</div><h3>18 стран без визы</h3><p>Безвизовый многократный въезд в страны Азии и Тихоокеанского региона.</p></div>
+      <div class="adv-card"><div class="ico">🗓️</div><h3>5 лет действия</h3><p>Карта работает 5 лет — не нужно оформлять визы к каждой поездке.</p></div>
+      <div class="adv-card"><div class="ico">🏝️</div><h3>59–90 дней на поездку</h3><p>На каждый въезд — до 90 дней. Поездка не обязательно деловая.</p></div>
+      <div class="adv-card"><div class="ico">💻</div><h3>Полностью дистанционно</h3><p>Оформление онлайн. Согласование не зависит от посольств и консульств.</p></div>
+      <div class="adv-card"><div class="ico">💰</div><h3>Экономия до 1,4 млн ₽</h3><p>Экономия на визах за весь срок использования карты.</p></div>
+      <div class="adv-card"><div class="ico">⚡</div><h3>Ускоренный выпуск</h3><p>Есть тариф «Экспресс» с сокращённым сроком изготовления карты.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTRIES -->
+<section class="block soft">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>18 стран-участниц</h2>
+      <p>Куда можно въезжать по карте АТЭС без оформления визы</p>
+    </div>
+    <div class="country-grid">
+      <div class="country-item"><span class="fl">🇦🇺</span> Австралия</div>
+      <div class="country-item"><span class="fl">🇧🇳</span> Бруней-Даруссалам</div>
+      <div class="country-item"><span class="fl">🇲🇽</span> Мексика</div>
+      <div class="country-item"><span class="fl">🇳🇿</span> Новая Зеландия</div>
+      <div class="country-item"><span class="fl">🇵🇪</span> Перу</div>
+      <div class="country-item"><span class="fl">🇹🇼</span> Тайвань</div>
+      <div class="country-item"><span class="fl">🇹🇭</span> Таиланд</div>
+      <div class="country-item"><span class="fl">🇨🇱</span> Чили</div>
+      <div class="country-item"><span class="fl">🇰🇷</span> Южная Корея</div>
+      <div class="country-item"><span class="fl">🇻🇳</span> Вьетнам</div>
+      <div class="country-item"><span class="fl">🇭🇰</span> Гонконг</div>
+      <div class="country-item"><span class="fl">🇮🇩</span> Индонезия</div>
+      <div class="country-item"><span class="fl">🇨🇳</span> Китай</div>
+      <div class="country-item"><span class="fl">🇲🇾</span> Малайзия</div>
+      <div class="country-item"><span class="fl">🇵🇬</span> Папуа — Новая Гвинея</div>
+      <div class="country-item"><span class="fl">🇸🇬</span> Сингапур</div>
+      <div class="country-item"><span class="fl">🇯🇵</span> Япония</div>
+      <div class="country-item"><span class="fl">🇵🇭</span> Филиппины</div>
+    </div>
+  </div>
+</section>
+
+<!-- TARIFFS -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Тарифы</h2>
+      <p>Выберите вариант оформления под ваши сроки</p>
+    </div>
+    <div class="tariffs">
+      <div class="tariff std">
+        <span class="t-badge">★ Стандарт</span>
+        <h3>Стандарт</h3>
+        <div class="t-price">от 70 000 <small>₽</small></div>
+        <ul>
+          <li>Срок выпуска 6–12 месяцев</li>
+          <li>17 стран — въезд без визы</li>
+          <li>Австралия — по временной карте</li>
+        </ul>
+        <button class="btn btn-buy" onclick="openAtes()">Купить →</button>
+      </div>
+      <div class="tariff biz featured">
+        <span class="t-badge">🏆 Бизнес</span>
+        <h3>Бизнес</h3>
+        <div class="t-price">от 150 000 <small>₽</small></div>
+        <ul>
+          <li>Срок выпуска 3–5 месяцев</li>
+          <li>18 стран — въезд без визы</li>
+          <li>Максимально быстрое согласование</li>
+        </ul>
+        <button class="btn btn-buy" onclick="openAtes()">Купить →</button>
+      </div>
+      <div class="tariff exp">
+        <span class="t-badge">⚡ Экспресс</span>
+        <h3>Экспресс</h3>
+        <div class="t-price">от 75 000 <small>₽</small></div>
+        <ul>
+          <li>Срок выпуска 4–6 месяцев</li>
+          <li>17 стран — въезд без визы</li>
+          <li>Ускоренное оформление</li>
+        </ul>
+        <button class="btn btn-buy" onclick="openAtes()">Купить →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="block soft">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Требования для получения</h2>
+      <p>Кто может оформить карту АТЭС</p>
+    </div>
+    <div class="req-list">
+      <div class="req-item"><div class="num">1</div><p>Гражданин РФ с постоянной регистрацией на территории России.</p></div>
+      <div class="req-item"><div class="num">2</div><p>Индивидуальный предприниматель, либо работник руководящего уровня в российском юридическом лице, либо сотрудник госструктуры, деятельность которой связана с участием РФ в АТЭС.</p></div>
+      <div class="req-item"><div class="num">3</div><p>Не находящийся под уголовным преследованием, не судимый (либо с погашенной/снятой судимостью — приравнивается к отсутствию судимости, п. 6 ст. 86 УК РФ).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="block">
+  <div class="wrap">
+    <div class="final">
+      <h2>Готовы оформить карту АТЭС?</h2>
+      <p>Нажмите «Купить» — подключим специалиста визового центра. Он ответит на вопросы и проведёт вас по всему оформлению.</p>
+      <button class="btn btn-buy" onclick="openAtes()" style="background:#fff;color:var(--blue);box-shadow:0 8px 24px rgba(0,0,0,0.2);">Купить карту АТЭС →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 VisaSlot · Карта АТЭС (APEC Business Travel Card)</div>
+</footer>
+
+<!-- DEMO MODAL -->
+<div class="demo-overlay" id="atesOverlay">
+  <div class="demo-window">
+    <button class="demo-close" onclick="closeAtes()" aria-label="Закрыть">×</button>
+    <iframe class="demo-iframe" id="atesFrame" title="Оформление карты АТЭС"></iframe>
+  </div>
+</div>
+
+<script>
+  function openAtes() {
+    const overlay = document.getElementById('atesOverlay');
+    const frame = document.getElementById('atesFrame');
+    frame.src = 'prototype.html?mode=ates&v=' + Date.now();
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAtes() {
+    const overlay = document.getElementById('atesOverlay');
+    document.getElementById('atesFrame').src = '';
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('atesOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('atesOverlay')) closeAtes();
+  });
+</script>
+
+</body>
+</html>

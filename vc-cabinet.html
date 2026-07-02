@@ -1723,8 +1723,14 @@
       const countryQ = data.qa.find(item => /страна|country/i.test(item.q));
       if (countryQ && countryQ.a !== '—') countryVal = countryQ.a;
     }
+    // Заявки без анкеты (напр. карта АТЭС) — берём страну/услугу из самой заявки
+    if (countryVal === '—' && data.country) countryVal = data.country;
     const tr = document.createElement('tr');
     tr.dataset.status = 'new';
+    tr.dataset.name = data.client || 'Клиент';
+    tr.dataset.phone = data.clientPhone ? ('+7' + data.clientPhone) : '';
+    tr.dataset.country = countryVal;
+    tr.dataset.visa = data.purpose || '';
     tr.style.cssText = 'background:var(--indigo-light);animation:fadeIn .4s ease;';
     tr.innerHTML = `
       <td>

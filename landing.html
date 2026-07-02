@@ -340,6 +340,56 @@
   .cta-final p { font-size: 19px; opacity: 0.9; max-width: 540px; margin: 0 auto 32px; }
   .cta-final .btn-primary { background: #fff; color: var(--indigo); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
 
+  /* ===== ATES — карта АТЭС (компактный баннер) ===== */
+  .ates-section { padding: 0 0 80px; }
+  .ates-banner {
+    display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center;
+    background: linear-gradient(135deg, #1e40af 0%, #0e2a6b 55%, #0891b2 140%);
+    border-radius: 28px; padding: 44px 48px; color: #fff; position: relative; overflow: hidden;
+  }
+  .ates-banner::after { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.10), transparent 70%); }
+  .ates-eyebrow { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #dbeafe; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; margin-bottom: 16px; }
+  .ates-title { font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .ates-title span { display: block; font-size: 15px; font-weight: 600; color: #bfdbfe; letter-spacing: 0; margin-top: 4px; }
+  .ates-lead { font-size: 16px; color: #e0e7ff; margin-bottom: 20px; max-width: 520px; }
+  .ates-facts { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; margin-bottom: 26px; }
+  .ates-facts li { font-size: 15px; color: #eaf1ff; padding-left: 24px; position: relative; }
+  .ates-facts li::before { content: '✓'; position: absolute; left: 0; top: 0; color: #67e8f9; font-weight: 800; }
+  .ates-facts li b { color: #fff; }
+  .ates-cta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .ates-price { display: flex; flex-direction: column; line-height: 1.1; }
+  .ates-price small { font-size: 12px; color: #bfdbfe; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ates-price b { font-size: 26px; font-weight: 800; }
+  .ates-cta .btn-primary { background: #fff; color: #1e40af; border-color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.22); }
+  /* Визуал карты */
+  .ates-visual { display: flex; justify-content: center; position: relative; z-index: 1; }
+  .ates-card-mock {
+    width: 100%; max-width: 300px; aspect-ratio: 1.586; border-radius: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%); color: #0e2a6b;
+    box-shadow: 0 22px 50px rgba(0,0,0,0.35); transform: rotate(-4deg);
+    padding: 20px 22px; display: flex; flex-direction: column; justify-content: space-between;
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  .ates-card-mock .apec-logo { font-size: 22px; font-weight: 900; letter-spacing: 1px; color: #1e3a8a; }
+  .ates-card-mock .apec-sub { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: #2563eb; text-transform: uppercase; }
+  .ates-card-mock .apec-chip { width: 40px; height: 30px; border-radius: 6px; background: linear-gradient(135deg, #fcd34d, #f59e0b); }
+  .ates-card-mock .apec-row { display: flex; align-items: center; justify-content: space-between; }
+  .ates-card-mock .apec-flag { font-size: 22px; }
+  .ates-card-mock .apec-valid { font-size: 10px; color: #475569; letter-spacing: 0.5px; }
+  @media (max-width: 820px) {
+    .ates-banner { grid-template-columns: 1fr; gap: 28px; padding: 32px 24px; text-align: center; }
+    .ates-title { font-size: 27px; }
+    .ates-lead { margin-left: auto; margin-right: auto; }
+    .ates-facts { max-width: 360px; margin-left: auto; margin-right: auto; text-align: left; }
+    .ates-cta { justify-content: center; }
+    .ates-visual { order: -1; }
+    .ates-card-mock { max-width: 260px; transform: rotate(-3deg); }
+  }
+  @media (max-width: 420px) {
+    .ates-facts { grid-template-columns: 1fr; }
+    .ates-cta .btn { width: 100%; }
+  }
+
   /* FOOTER */
   footer { padding: 48px 0 64px; border-top: 1px solid var(--line); margin-top: 80px; }
   .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
@@ -899,6 +949,45 @@
           <li>Докупка записей сверх квоты по сниженной цене</li>
         </ul>
         <a href="centers.html" class="btn btn-ghost">Подробнее для центров →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATES CARD — карта АТЭС -->
+<section class="ates-section" id="ates">
+  <div class="wrap">
+    <div class="ates-banner">
+      <div class="ates-info">
+        <span class="ates-eyebrow">✈️ Виза не нужна · 18 стран Азии и АТР</span>
+        <h2 class="ates-title">Карта АТЭС<span>APEC Business Travel Card</span></h2>
+        <p class="ates-lead">Международный визозаменяющий документ: безвизовый многократный въезд в 18 стран Азиатско-Тихоокеанского региона на 5 лет. Оформление полностью дистанционно, без визитов в посольства.</p>
+        <ul class="ates-facts">
+          <li><b>18 стран</b> Азии и АТР</li>
+          <li><b>5 лет</b> действия</li>
+          <li><b>59–90 дней</b> на поездку</li>
+          <li>Экономия на визах <b>до 1,4 млн ₽</b></li>
+        </ul>
+        <div class="ates-cta">
+          <div class="ates-price"><small>тарифы</small><b>от 70 000 ₽</b></div>
+          <a href="ates.html" class="btn btn-primary btn-lg">Ознакомиться →</a>
+        </div>
+      </div>
+      <div class="ates-visual">
+        <div class="ates-card-mock">
+          <div class="apec-row">
+            <div>
+              <div class="apec-logo">APEC</div>
+              <div class="apec-sub">Business Travel Card</div>
+            </div>
+            <div class="apec-flag">🇷🇺</div>
+          </div>
+          <div class="apec-chip"></div>
+          <div class="apec-row">
+            <div class="apec-valid">VALID FOR 5 YEARS</div>
+            <div class="apec-valid">18 COUNTRIES</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
