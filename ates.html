@@ -57,7 +57,7 @@
   .card-mock .apec-logo { font-size: 26px; font-weight: 900; letter-spacing: 1px; color: #1e3a8a; }
   .card-mock .apec-sub { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: #2563eb; text-transform: uppercase; }
   .card-mock .apec-chip { width: 46px; height: 34px; border-radius: 7px; background: linear-gradient(135deg, #fcd34d, #f59e0b); }
-  .card-mock .apec-flag { font-size: 26px; }
+  .card-mock .apec-flag { width: 34px; height: 24px; border-radius: 4px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,0.1); }
   .card-mock .apec-valid { font-size: 10px; color: #475569; letter-spacing: 0.5px; font-weight: 600; }
 
   /* SECTIONS */
@@ -77,7 +77,7 @@
   /* countries */
   .country-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .country-item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; font-size: 15px; font-weight: 500; }
-  .country-item .fl { font-size: 20px; }
+  .country-item .fl { width: 26px; height: 18px; border-radius: 3px; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
 
   /* tariffs */
   .tariffs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
@@ -166,7 +166,7 @@
             <div class="apec-logo">APEC</div>
             <div class="apec-sub">Business Travel Card</div>
           </div>
-          <div class="apec-flag">🇷🇺</div>
+          <img class="apec-flag" src="https://flagcdn.com/w40/ru.png" alt="RU">
         </div>
         <div class="apec-chip"></div>
         <div class="apec-row">
@@ -204,24 +204,24 @@
       <p>Куда можно въезжать по карте АТЭС без оформления визы</p>
     </div>
     <div class="country-grid">
-      <div class="country-item"><span class="fl">🇦🇺</span> Австралия</div>
-      <div class="country-item"><span class="fl">🇧🇳</span> Бруней-Даруссалам</div>
-      <div class="country-item"><span class="fl">🇲🇽</span> Мексика</div>
-      <div class="country-item"><span class="fl">🇳🇿</span> Новая Зеландия</div>
-      <div class="country-item"><span class="fl">🇵🇪</span> Перу</div>
-      <div class="country-item"><span class="fl">🇹🇼</span> Тайвань</div>
-      <div class="country-item"><span class="fl">🇹🇭</span> Таиланд</div>
-      <div class="country-item"><span class="fl">🇨🇱</span> Чили</div>
-      <div class="country-item"><span class="fl">🇰🇷</span> Южная Корея</div>
-      <div class="country-item"><span class="fl">🇻🇳</span> Вьетнам</div>
-      <div class="country-item"><span class="fl">🇭🇰</span> Гонконг</div>
-      <div class="country-item"><span class="fl">🇮🇩</span> Индонезия</div>
-      <div class="country-item"><span class="fl">🇨🇳</span> Китай</div>
-      <div class="country-item"><span class="fl">🇲🇾</span> Малайзия</div>
-      <div class="country-item"><span class="fl">🇵🇬</span> Папуа — Новая Гвинея</div>
-      <div class="country-item"><span class="fl">🇸🇬</span> Сингапур</div>
-      <div class="country-item"><span class="fl">🇯🇵</span> Япония</div>
-      <div class="country-item"><span class="fl">🇵🇭</span> Филиппины</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/au.png" alt="" loading="lazy"> Австралия</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/bn.png" alt="" loading="lazy"> Бруней-Даруссалам</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/mx.png" alt="" loading="lazy"> Мексика</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/nz.png" alt="" loading="lazy"> Новая Зеландия</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/pe.png" alt="" loading="lazy"> Перу</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/tw.png" alt="" loading="lazy"> Тайвань</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/th.png" alt="" loading="lazy"> Таиланд</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/cl.png" alt="" loading="lazy"> Чили</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/kr.png" alt="" loading="lazy"> Южная Корея</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/vn.png" alt="" loading="lazy"> Вьетнам</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/hk.png" alt="" loading="lazy"> Гонконг</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/id.png" alt="" loading="lazy"> Индонезия</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/cn.png" alt="" loading="lazy"> Китай</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/my.png" alt="" loading="lazy"> Малайзия</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/pg.png" alt="" loading="lazy"> Папуа — Новая Гвинея</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/sg.png" alt="" loading="lazy"> Сингапур</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/jp.png" alt="" loading="lazy"> Япония</div>
+      <div class="country-item"><img class="fl" src="https://flagcdn.com/w40/ph.png" alt="" loading="lazy"> Филиппины</div>
     </div>
   </div>
 </section>
