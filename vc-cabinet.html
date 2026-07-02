@@ -307,12 +307,13 @@
     .app-table td:nth-child(7) { flex: 1 1 40%; width: auto; margin-bottom: 10px !important; }
     .app-table td:nth-child(7) .btn-xs { width: 100%; height: 36px; box-sizing: border-box; justify-content: center; }
 
-    /* Ряд 2: Взять + Статус — всегда в одну строку, статус растягивается при длинном тексте */
-    .app-table td:nth-child(8) { flex: 1 1 auto; width: auto; padding-right: 8px !important; box-sizing: border-box; margin-bottom: 10px !important; min-width: 0; }
+    /* Ряд 2: Взять + Статус — по умолчанию поровну (50/50); при длинном статусе
+       он растёт по содержимому, а «Взять» немного ужимается. Всегда в одну строку. */
+    .app-table td:nth-child(8) { flex: 1 1 auto; width: auto; padding-right: 8px !important; box-sizing: border-box; margin-bottom: 10px !important; }
     .app-table td:nth-child(8) .action-btns { flex-wrap: nowrap; gap: 8px; }
-    .app-table td:nth-child(8) .btn-xs { flex: 0 0 auto; height: 36px; justify-content: center; padding: 8px 14px; font-size: 13px; box-sizing: border-box; white-space: nowrap; }
-    .app-table td:nth-child(10) { flex: 1 1 auto; width: auto; margin-bottom: 10px !important; min-width: 0; }
-    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-table td:nth-child(8) .btn-xs { width: 100%; height: 36px; justify-content: center; padding: 8px 10px; font-size: 13px; box-sizing: border-box; white-space: nowrap; }
+    .app-table td:nth-child(10) { flex: 1 1 auto; width: auto; margin-bottom: 10px !important; }
+    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; white-space: nowrap; }
 
     /* Ряд 3: Документы на всю ширину (в референсе их не было — оставляем снизу) */
     .app-table td:nth-child(9) { order: 12; margin-bottom: 0 !important; }
