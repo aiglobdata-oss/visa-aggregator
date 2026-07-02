@@ -429,6 +429,21 @@
     .filter-chip { font-size: 12px; padding: 8px 14px; }
   }
 
+  /* ===== МОБАЙЛ: карточки до краёв + компактные отступы между секциями ===== */
+  @media (max-width: 640px) {
+    .wrap { padding: 0 10px; }
+    section.block { padding: 36px 0; }
+    .cards-section { padding: 36px 0 28px; }
+    .section-head { margin-bottom: 26px; }
+    .cards-section .section-head { margin-bottom: 22px; }
+    .ates-section { padding: 8px 0 36px; }
+    .ates-banner { padding: 28px 18px; border-radius: 22px; }
+    .cta-final { margin: 0 10px; padding: 40px 22px; border-radius: 22px; }
+    footer { margin-top: 28px; padding: 28px 0 40px; }
+    .steps { gap: 12px; }
+    .cards-grid { gap: 14px; }
+  }
+
   /* ===== BANK DETAIL MODAL — премиум тёмно-золотой ===== */
   .detail-overlay {
     position: fixed; inset: 0; background: rgba(5, 8, 20, 0.75);
@@ -915,45 +930,6 @@
   </div>
 </section>
 
-<!-- PRICING / AUDIENCE -->
-<section class="block" id="pricing">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="eyebrow">Тарифы</div>
-      <h2>Для людей и для центров</h2>
-      <p>Платишь за результат, а не за подписку, которая может не пригодиться.</p>
-    </div>
-    <div class="aud-grid">
-      <div class="aud-card featured">
-        <span class="aud-tag people">Для обычных людей</span>
-        <h3>Оплата за результат</h3>
-        <div class="price">5 000 ₽ <small>/ запись</small></div>
-        <div class="price-note">Одинаково для всех стран. Без подписки.</div>
-        <ul class="aud-list">
-          <li>Платишь только когда слот найден</li>
-          <li>Единая цена для Франции, Италии, Испании, Болгарии</li>
-          <li>Мониторинг окон 24/7</li>
-          <li>Готовый пакет документов</li>
-        </ul>
-        <a href="#cta" class="btn btn-primary">Найти мне слот</a>
-      </div>
-      <div class="aud-card" id="centers">
-        <span class="aud-tag center">Для визовых центров</span>
-        <h3>Подписка + квота</h3>
-        <div class="price">от 50 000 ₽ <small>/ месяц</small></div>
-        <div class="price-note">Доступ к агрегатору и квота записей.</div>
-        <ul class="aud-list">
-          <li>Лента слотов в реальном времени по всем странам</li>
-          <li>Массовая загрузка клиентов списком</li>
-          <li>Дашборд заявок и остатка квоты</li>
-          <li>Докупка записей сверх квоты по сниженной цене</li>
-        </ul>
-        <a href="centers.html" class="btn btn-ghost">Подробнее для центров →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ATES CARD — карта АТЭС -->
 <section class="ates-section" id="ates">
   <div class="wrap">
@@ -988,6 +964,45 @@
             <div class="apec-valid">18 COUNTRIES</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING / AUDIENCE -->
+<section class="block" id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Тарифы</div>
+      <h2>Для людей и для центров</h2>
+      <p>Платишь за результат, а не за подписку, которая может не пригодиться.</p>
+    </div>
+    <div class="aud-grid">
+      <div class="aud-card featured">
+        <span class="aud-tag people">Для обычных людей</span>
+        <h3>Оплата за результат</h3>
+        <div class="price">5 000 ₽ <small>/ запись</small></div>
+        <div class="price-note">Одинаково для всех стран. Без подписки.</div>
+        <ul class="aud-list">
+          <li>Платишь только когда слот найден</li>
+          <li>Единая цена для Франции, Италии, Испании, Болгарии</li>
+          <li>Мониторинг окон 24/7</li>
+          <li>Готовый пакет документов</li>
+        </ul>
+        <a href="#cta" class="btn btn-primary">Найти мне слот</a>
+      </div>
+      <div class="aud-card" id="centers">
+        <span class="aud-tag center">Для визовых центров</span>
+        <h3>Подписка + квота</h3>
+        <div class="price">от 50 000 ₽ <small>/ месяц</small></div>
+        <div class="price-note">Доступ к агрегатору и квота записей.</div>
+        <ul class="aud-list">
+          <li>Лента слотов в реальном времени по всем странам</li>
+          <li>Массовая загрузка клиентов списком</li>
+          <li>Дашборд заявок и остатка квоты</li>
+          <li>Докупка записей сверх квоты по сниженной цене</li>
+        </ul>
+        <a href="centers.html" class="btn btn-ghost">Подробнее для центров →</a>
       </div>
     </div>
   </div>
