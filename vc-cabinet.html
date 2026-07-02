@@ -295,28 +295,31 @@
     .app-table td:nth-child(5) { font-size: 15px; color: var(--muted); margin-bottom: 12px !important; }
     .app-table td:nth-child(5):before { content: "🕐 "; }
 
-    /* Специалист (col 6): скрыть на мобайле */
-    .app-table td:nth-child(6).spec-col { display: none !important; }
+    /* Карточка-заявка: кнопки в два ряда — [Специалист + Чат] / [Взять + Статус] */
+    .app-table tr { display: flex !important; flex-wrap: wrap; }
+    .app-table td { width: 100%; }
+    .app-table td:nth-child(2) { width: auto; }
+    .app-table td:nth-child(3) { width: auto; flex: 1; }
 
-    /* Чат (col 7) */
-    .app-table td:nth-child(7) { display: inline-block !important; width: 100%; margin-bottom: 10px !important; }
+    /* Ряд 1: Специалист (дропдаун) + Чат */
+    .app-table td:nth-child(6).spec-col { flex: 0 0 55%; width: 55%; padding-right: 8px !important; box-sizing: border-box; margin-bottom: 10px !important; }
+    .app-table .spec-select { width: 100%; height: 36px; box-sizing: border-box; }
+    .app-table td:nth-child(7) { flex: 1 1 40%; width: auto; margin-bottom: 10px !important; }
     .app-table td:nth-child(7) .btn-xs { width: 100%; height: 36px; box-sizing: border-box; justify-content: center; }
 
-    /* Действия (col 8) */
-    .app-table td:nth-child(8) { margin-bottom: 4px !important; }
+    /* Ряд 2: Взять (шире) + Статус */
+    .app-table td:nth-child(8) { flex: 0 0 64%; width: 64%; padding-right: 8px !important; box-sizing: border-box; margin-bottom: 10px !important; }
     .app-table td:nth-child(8) .action-btns { flex-wrap: wrap; gap: 8px; }
-    .app-table td:nth-child(8) .btn-xs { flex: 1; min-width: 80px; justify-content: center; padding: 8px 10px; font-size: 13px; }
+    .app-table td:nth-child(8) .btn-xs { flex: 1; min-width: 80px; height: 36px; justify-content: center; padding: 8px 10px; font-size: 13px; box-sizing: border-box; }
+    .app-table td:nth-child(10) { flex: 1 1 32%; width: auto; margin-bottom: 10px !important; }
+    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; min-width: 0; }
 
-    /* Документы (col 9) */
-    .app-table td:nth-child(9) { margin-bottom: 4px !important; }
-    .app-table td:nth-child(9) .btn-xs { width: 100%; justify-content: center; padding: 8px 10px; font-size: 13px; }
-
-    /* Статус (col 10) */
-    .app-table td:nth-child(10) { margin-bottom: 0 !important; }
-    .app-table td .app-stat-pill { width: 100%; box-sizing: border-box; justify-content: space-between; height: 36px; align-items: center; border-radius: 8px; min-width: 80px; }
+    /* Ряд 3: Документы на всю ширину (в референсе их не было — оставляем снизу) */
+    .app-table td:nth-child(9) { order: 12; margin-bottom: 0 !important; }
+    .app-table td:nth-child(9) .btn-xs { width: 100%; justify-content: center; padding: 8px 10px; font-size: 13px; height: 36px; box-sizing: border-box; }
 
     /* Корзина (col 11): поверх справа */
-    .app-table td:nth-child(11) { display: inline-block !important; position: absolute; top: 14px; right: 14px; }
+    .app-table td:nth-child(11) { position: absolute; top: 14px; right: 14px; width: auto; }
 
     /* ── Слоты: баланс рядом с заголовком на мобайле ── */
     .slot-balance-mobile { display: inline-block !important; }
@@ -355,6 +358,9 @@
     #section-settings .form-row > div { width: 100% !important; }
     #section-settings input, #section-settings select, #section-settings textarea { width: 100%; box-sizing: border-box; }
   }
+
+  /* Роль «менеджер»: столбец Специалист скрыт (класс ставит applyRoleUI) */
+  .app-table .spec-hidden { display: none !important; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -3301,8 +3307,10 @@
     });
 
     // Заявки: столбец «Специалист» — скрыть для менеджера
+    // (класс вместо инлайн-стиля: на мобайле карточный CSS с !important перебивал inline display)
     document.querySelectorAll('.spec-col').forEach(el => {
-      el.style.display = admin ? '' : 'none';
+      el.style.display = '';
+      el.classList.toggle('spec-hidden', !admin);
     });
 
     // Слоты: кнопка «+ Добавить слот»
