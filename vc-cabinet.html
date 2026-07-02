@@ -1433,13 +1433,24 @@
 
   let _pendingPaidPill = null;
 
+  // Достаёт имя и телефон клиента из ячейки строки (без слипания с инициалами аватара)
+  function getClientInfo(tr) {
+    const cell = tr.cells[0];
+    const ava = cell.querySelector('.client-ava');
+    const wrap = ava ? ava.nextElementSibling : null;
+    const name = (wrap && wrap.children[0]) ? wrap.children[0].textContent.trim()
+      : (tr.dataset.name || cell.textContent.trim().split('\n')[0].trim());
+    const phone = (wrap && wrap.children[1]) ? wrap.children[1].textContent.trim()
+      : (tr.dataset.phone || '');
+    return { name, phone };
+  }
+
   function openPaymentAmountModal() {
     const tr = _pendingPaidPill ? _pendingPaidPill.closest('tr') : null;
     if (!tr) return;
-    const clientName = tr.cells[0].querySelector('strong,b')
-      ? tr.cells[0].querySelector('strong,b').textContent.trim()
-      : tr.cells[0].textContent.trim().split('\n')[0].trim();
-    document.getElementById('pam-client').textContent = clientName;
+    const { name, phone } = getClientInfo(tr);
+    document.getElementById('pam-client').textContent = name;
+    document.getElementById('pam-phone').textContent = phone;
     document.getElementById('pam-amount').value = '';
     document.getElementById('pay-amount-overlay').style.display = 'flex';
     setTimeout(() => document.getElementById('pam-amount').focus(), 100);
@@ -1450,9 +1461,7 @@
     const num = parseInt(raw);
     if (!num || num <= 0) { document.getElementById('pam-amount').style.borderColor='#dc2626'; setTimeout(()=>document.getElementById('pam-amount').style.borderColor='',1500); return; }
     const tr = _pendingPaidPill.closest('tr');
-    const clientName = tr.cells[0].querySelector('strong,b')
-      ? tr.cells[0].querySelector('strong,b').textContent.trim()
-      : tr.cells[0].textContent.trim().split('\n')[0].trim();
+    const clientName = getClientInfo(tr).name;
     const country = tr.cells[1] ? tr.cells[1].textContent.trim() : '—';
     const manager = tr.dataset.spec || '—';
     // Дата сегодня
@@ -2333,7 +2342,7 @@
 <div id="pay-amount-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:20px;padding:28px 28px 24px;width:340px;max-width:92vw;box-shadow:0 16px 48px rgba(0,0,0,.18);">
     <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Сумма оплаты</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Клиент: <span id="pam-client" style="font-weight:600;color:var(--ink);"></span></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Клиент: <span id="pam-client" style="font-weight:600;color:var(--ink);"></span> <span id="pam-phone" style="font-weight:600;color:var(--ink);white-space:nowrap;"></span></div>
     <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);">Сумма (₽)</label>
     <input id="pam-amount" type="number" min="1" placeholder="например, 15000"
       style="width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;font-family:inherit;margin:6px 0 20px;outline:none;"
